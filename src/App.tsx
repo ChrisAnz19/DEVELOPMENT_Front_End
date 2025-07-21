@@ -368,8 +368,10 @@ function App() {
             {searchHistory.length > 0 && !showHistory && (
               <button
                 onClick={handleToggleHistory}
-                className="flex items-center space-x-2 backdrop-blur-sm border border-white/20 rounded-full px-4 py-3 text-white hover:opacity-80 transition-all duration-200 shadow-lg"
+                className="flex items-center space-x-2 backdrop-blur-sm border border-white/20 rounded-full px-4 py-3 text-white transition-all duration-200 shadow-lg"
                 style={{ backgroundColor: '#5B4EDB' }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#79D284'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#5B4EDB'; }}
               >
                 <History size={16} />
                 <span className="text-sm font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>History</span>
@@ -380,8 +382,10 @@ function App() {
             {user && (
               <button
                 onClick={handleToggleTrackingModal}
-                className="flex items-center space-x-2 backdrop-blur-sm border border-white/20 rounded-full px-4 py-3 text-white hover:opacity-80 transition-all duration-200 shadow-lg"
+                className="flex items-center space-x-2 backdrop-blur-sm border border-white/20 rounded-full px-4 py-3 text-white transition-all duration-200 shadow-lg"
                 style={{ backgroundColor: '#5B4EDB' }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#79D284'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#5B4EDB'; }}
               >
                 <span className="text-sm font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>Tracking</span>
               </button>
