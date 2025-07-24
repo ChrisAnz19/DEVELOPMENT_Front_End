@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { X, Target, Mail, Linkedin, ThumbsUp, ThumbsDown, ChevronDown, ChevronUp, Eye, EyeOff, Phone, TrendingUp, Shield, Heart, ChevronRight, Brain, MessageSquare } from 'lucide-react';
+import { X, Target, Mail, Linkedin, ThumbsUp, ThumbsDown, ChevronDown, ChevronUp, Eye, EyeOff, Phone, TrendingUp, Shield, Heart, ChevronRight, Brain } from 'lucide-react';
 import { SearchResponse, Candidate } from '../hooks/useKnowledgeGPT';
 
 interface SearchResultsProps {
@@ -27,7 +27,6 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [showPhoneNumbers, setShowPhoneNumbers] = useState<Set<string>>(new Set());
   const [expandedBehavioralSections, setExpandedBehavioralSections] = useState<Set<string>>(new Set());
-  const [expandedEngagementSections, setExpandedEngagementSections] = useState<Set<string>>(new Set());
 
   if (!isVisible) return null;
 
@@ -72,19 +71,17 @@ const SearchResults: React.FC<SearchResultsProps> = ({
     setExpandedBehavioralSections(newExpanded);
   };
 
-  const toggleEngagementSection = (candidateKey: string) => {
-    const newExpanded = new Set(expandedEngagementSections);
-    if (newExpanded.has(candidateKey)) {
-      newExpanded.delete(candidateKey);
-    } else {
-      newExpanded.add(candidateKey);
-    }
-    setExpandedEngagementSections(newExpanded);
-  };
-
   // Get candidates from API results or use empty array
   const candidates: Candidate[] = searchResults?.candidates || [];
   
+  // Get initials from candidate name
+  const getInitials = (name: string): string => {
+    if (!name) return '?';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+    return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+  };
+
   // Default photo for candidates without profile photos
   const getProfilePhoto = (candidate: Candidate): string => {
     if (candidate.profile_photo_url) {
@@ -155,12 +152,30 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                 className="flex items-center justify-between p-4 sm:p-5 cursor-pointer hover:bg-white/5 transition-all duration-200"
               >
                 <div className="flex items-center space-x-3 sm:space-x-4 flex-1">
-                  {/* Photo */}
-                  <img
-                    src={getProfilePhoto(candidate)}
-                    alt={candidate.name}
-                    className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover border-2 border-white/20 flex-shrink-0"
-                  />
+                  {/* Photo with fallback to initials */}
+                  <div className="relative w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
+                    <img
+                      src={getProfilePhoto(candidate)}
+                      alt={candidate.name}
+                      className="w-full h-full rounded-full object-cover border-2 border-white/20"
+                      onError={(e) => {
+                        // Hide the image on error
+                        (e.target as HTMLImageElement).style.display = 'none';
+                        // Show the initials div
+                        const parent = (e.target as HTMLImageElement).parentElement;
+                        if (parent) {
+                          const initialsDiv = parent.querySelector('.initials-fallback');
+                          if (initialsDiv) initialsDiv.classList.remove('hidden');
+                        }
+                      }}
+                    />
+                    <div 
+                      className="initials-fallback hidden absolute inset-0 w-full h-full rounded-full flex items-center justify-center text-white font-semibold text-lg border-2 border-white/20"
+                      style={{ backgroundColor: '#79D284' }}
+                    >
+                      {getInitials(candidate.name)}
+                    </div>
+                  </div>
                   
                   {/* Info */}
                   <div className="flex-1">
@@ -303,10 +318,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
                     {/* Candidate Behavioral Data */}
                     {candidate.behavioral_data && (
-                      <div className="mb-6 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
+                      <div className="mb-6 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-3">
                         <button
                           onClick={() => toggleBehavioralSection(candidate.email || candidate.name)}
-                          className="w-full flex items-center justify-between mb-3 hover:bg-white/5 rounded-lg p-2 -m-2 transition-colors duration-200"
+                          className="w-full flex items-center justify-between hover:bg-white/5 rounded-lg py-3 px-3 -m-2 transition-colors duration-200"
                         >
                           <div className="flex items-center space-x-2">
                             <Brain size={16} className="text-blue-400" />
@@ -424,43 +439,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                           </>
                         )}
                         
-                        {/* Engagement Strategy - Separate collapsible section */}
-                        <button
-                          onClick={() => toggleEngagementSection(candidate.email || candidate.name)}
-                          className="w-full flex items-center justify-between hover:bg-white/5 rounded-lg p-2 -m-2 transition-colors duration-200"
-                        >
-                          <div className="flex items-center space-x-2">
-                            <MessageSquare size={16} className="text-green-400" />
-                            <h5 className="text-white/90 font-medium text-sm" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                              Engagement Strategy
-                            </h5>
-                          </div>
-                          <div className="text-white/50">
-                            {expandedEngagementSections.has(candidate.email || candidate.name) ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronRight size={16} />
-                            )}
-                          </div>
-                        </button>
-                        
-                        {expandedEngagementSections.has(candidate.email || candidate.name) && (
-                          <div className="bg-white/5 border border-white/10 rounded-lg p-4 mt-3">
-                            <div className="flex items-start space-x-3">
-                              <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1" style={{ backgroundColor: '#79D284' }}>
-                                <span className="text-white text-sm">💡</span>
-                              </div>
-                              <div className="flex-1">
-                                <h6 className="text-white/90 font-medium text-sm mb-2" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                                  How to Engage
-                                </h6>
-                                <p className="text-white/80 text-sm leading-relaxed" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                                  {candidate.behavioral_data.behavioral_insight}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        )}
+
                       </div>
                     )}
 
@@ -506,11 +485,11 @@ const SearchResults: React.FC<SearchResultsProps> = ({
           <div className="p-4 sm:p-6 border-t border-white/10">
           <button 
             onClick={onPushToCrm}
-            className="w-full text-white font-medium py-2.5 sm:py-3 px-4 rounded-xl hover:opacity-90 transition-opacity duration-200 text-sm sm:text-base"
-            style={{ backgroundColor: '#79D284' }} 
+            className="group relative overflow-hidden w-full text-white font-medium py-2.5 sm:py-3 px-4 rounded-xl border border-white/20 transition-all duration-200 text-sm sm:text-base"
             style={{ fontFamily: 'Poppins, sans-serif' }}
           >
-            Push to CRM
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ backgroundColor: '#79D284' }}></div>
+            <span className="relative z-10">Push to CRM</span>
           </button>
           </div>
         )}

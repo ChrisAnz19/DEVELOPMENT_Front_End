@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Target, Mail, Linkedin, Phone, Eye, EyeOff, ChevronDown, ChevronUp, ChevronRight, Brain, MessageSquare, TrendingUp, TrendingDown, Shield, Heart } from 'lucide-react';
+import { X, Target, Mail, Linkedin, Phone, Eye, EyeOff, ChevronDown, ChevronUp, ChevronRight, Brain, TrendingUp, TrendingDown, Shield, Heart } from 'lucide-react';
 
 interface TrackedPerson {
   id: string;
@@ -33,7 +33,6 @@ const PersonDetailModal: React.FC<PersonDetailModalProps> = ({
 }) => {
   const [showPhoneNumbers, setShowPhoneNumbers] = useState(false);
   const [expandedBehavioralSection, setExpandedBehavioralSection] = useState(false);
-  const [expandedEngagementSection, setExpandedEngagementSection] = useState(false);
 
   if (!isVisible || !person) return null;
 
@@ -45,10 +44,6 @@ const PersonDetailModal: React.FC<PersonDetailModalProps> = ({
     setExpandedBehavioralSection(!expandedBehavioralSection);
   };
 
-  const toggleEngagementSection = () => {
-    setExpandedEngagementSection(!expandedEngagementSection);
-  };
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { 
@@ -57,17 +52,16 @@ const PersonDetailModal: React.FC<PersonDetailModalProps> = ({
       year: 'numeric'
     });
   };
-
-  // Mock behavioral insight based on scores
-  const getBehavioralInsight = () => {
-    if (person.cmi > 70 && person.ias > 70) {
-      return "This prospect shows high commitment momentum and strong identity alignment. They're likely ready to move forward with solutions that match their professional goals. Focus on demonstrating clear ROI and next steps.";
-    } else if (person.rbfs > 60) {
-      return "This prospect is risk-conscious and values thorough evaluation. Provide detailed case studies, testimonials, and address potential concerns upfront. Consider offering a pilot program or trial.";
-    } else {
-      return "This prospect appears to be in early research phase. Focus on educational content and building trust. Share industry insights and thought leadership to establish credibility.";
-    }
+  
+  // Get initials from person name
+  const getInitials = (name: string): string => {
+    if (!name) return '?';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+    return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
   };
+
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
@@ -75,11 +69,29 @@ const PersonDetailModal: React.FC<PersonDetailModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/10">
           <div className="flex items-center space-x-4">
-            <img
-              src={person.profilePhoto}
-              alt={person.name}
-              className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover border-2 border-white/20"
-            />
+            <div className="relative w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0">
+              <img
+                src={person.profilePhoto}
+                alt={person.name}
+                className="w-full h-full rounded-full object-cover border-2 border-white/20"
+                onError={(e) => {
+                  // Hide the image on error
+                  (e.target as HTMLImageElement).style.display = 'none';
+                  // Show the initials div
+                  const parent = (e.target as HTMLImageElement).parentElement;
+                  if (parent) {
+                    const initialsDiv = parent.querySelector('.initials-fallback');
+                    if (initialsDiv) initialsDiv.classList.remove('hidden');
+                  }
+                }}
+              />
+              <div 
+                className="initials-fallback hidden absolute inset-0 w-full h-full rounded-full flex items-center justify-center text-white font-semibold text-lg border-2 border-white/20"
+                style={{ backgroundColor: '#79D284' }}
+              >
+                {getInitials(person.name)}
+              </div>
+            </div>
             <div>
               <h2 className="text-white text-lg sm:text-xl font-semibold mb-1" style={{ fontFamily: 'Montserrat, sans-serif' }}>
                 {person.name}
@@ -194,10 +206,10 @@ const PersonDetailModal: React.FC<PersonDetailModalProps> = ({
           </div>
 
           {/* Behavioral Analysis */}
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-4">
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-3">
             <button
               onClick={toggleBehavioralSection}
-              className="w-full flex items-center justify-between mb-3 hover:bg-white/5 rounded-lg p-2 -m-2 transition-colors duration-200"
+              className="w-full flex items-center justify-between hover:bg-white/5 rounded-lg py-3 px-3 -m-2 transition-colors duration-200"
             >
               <div className="flex items-center space-x-2">
                 <Brain size={16} className="text-blue-400" />
@@ -427,43 +439,7 @@ const PersonDetailModal: React.FC<PersonDetailModalProps> = ({
               </>
             )}
             
-            {/* Engagement Strategy - Separate collapsible section */}
-            <button
-              onClick={toggleEngagementSection}
-              className="w-full flex items-center justify-between hover:bg-white/5 rounded-lg p-2 -m-2 transition-colors duration-200"
-            >
-              <div className="flex items-center space-x-2">
-                <MessageSquare size={16} className="text-green-400" />
-                <h5 className="text-white/90 font-medium text-sm" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                  Engagement Strategy
-                </h5>
-              </div>
-              <div className="text-white/50">
-                {expandedEngagementSection ? (
-                  <ChevronUp size={16} />
-                ) : (
-                  <ChevronRight size={16} />
-                )}
-              </div>
-            </button>
-            
-            {expandedEngagementSection && (
-              <div className="bg-white/5 border border-white/10 rounded-lg p-4 mt-3">
-                <div className="flex items-start space-x-3">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1" style={{ backgroundColor: '#79D284' }}>
-                    <span className="text-white text-sm">💡</span>
-                  </div>
-                  <div className="flex-1">
-                    <h6 className="text-white/90 font-medium text-sm mb-2" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                      How to Engage
-                    </h6>
-                    <p className="text-white/80 text-sm leading-relaxed" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                      {getBehavioralInsight()}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
+
           </div>
 
           {/* Recent Activity */}

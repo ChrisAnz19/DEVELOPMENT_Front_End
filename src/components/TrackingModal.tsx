@@ -67,6 +67,14 @@ const TrackingModal: React.FC<TrackingModalProps> = ({
       year: 'numeric'
     });
   };
+  
+  // Get initials from person name
+  const getInitials = (name: string): string => {
+    if (!name) return '?';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+    return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
@@ -120,11 +128,29 @@ const TrackingModal: React.FC<TrackingModalProps> = ({
                   <tr key={person.id} className="border-b border-white/5 hover:bg-white/5 transition-colors duration-200 cursor-pointer">
                     <td className="py-4 px-2" onClick={() => handlePersonClick(person)}>
                       <div className="flex items-start space-x-3">
-                        <img
-                          src={person.profilePhoto}
-                          alt={person.name}
-                          className="w-10 h-10 rounded-full object-cover border-2 border-white/20"
-                        />
+                        <div className="relative w-10 h-10 flex-shrink-0">
+                          <img
+                            src={person.profilePhoto}
+                            alt={person.name}
+                            className="w-full h-full rounded-full object-cover border-2 border-white/20"
+                            onError={(e) => {
+                              // Hide the image on error
+                              (e.target as HTMLImageElement).style.display = 'none';
+                              // Show the initials div
+                              const parent = (e.target as HTMLImageElement).parentElement;
+                              if (parent) {
+                                const initialsDiv = parent.querySelector('.initials-fallback');
+                                if (initialsDiv) initialsDiv.classList.remove('hidden');
+                              }
+                            }}
+                          />
+                          <div 
+                            className="initials-fallback hidden absolute inset-0 w-full h-full rounded-full flex items-center justify-center text-white font-semibold text-sm border-2 border-white/20"
+                            style={{ backgroundColor: '#79D284' }}
+                          >
+                            {getInitials(person.name)}
+                          </div>
+                        </div>
                         <div className="flex-1">
                           <div className="text-white font-medium text-sm mb-1" style={{ fontFamily: 'Poppins, sans-serif' }}>
                             {person.name}
