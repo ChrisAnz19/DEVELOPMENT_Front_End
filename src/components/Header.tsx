@@ -31,7 +31,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleHistory, showHistoryButton = fa
           <img 
             src="/logo.png" 
             alt="Company Logo" 
-            className="h-11 sm:h-14 w-auto object-contain"
+            className="h-8 sm:h-10 w-auto object-contain"
             onError={(e) => {
               console.log('Logo failed to load');
               // Fallback to text if image fails

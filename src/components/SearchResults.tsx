@@ -28,6 +28,15 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   const [showPhoneNumbers, setShowPhoneNumbers] = useState<Set<string>>(new Set());
   const [expandedBehavioralSections, setExpandedBehavioralSections] = useState<Set<string>>(new Set());
 
+  // Reset all expanded states when modal opens or search results change
+  React.useEffect(() => {
+    if (isVisible) {
+      setExpandedCards(new Set());
+      setShowPhoneNumbers(new Set());
+      setExpandedBehavioralSections(new Set());
+    }
+  }, [isVisible, searchResults]);
+
   if (!isVisible) return null;
 
   const toggleCard = (candidateEmail: string) => {
@@ -103,15 +112,20 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             <h2 className="text-white text-lg sm:text-xl font-semibold mb-1" style={{ fontFamily: 'Montserrat, sans-serif' }}>
               Search Results
             </h2>
-            <p className="text-white/70 text-sm" style={{ fontFamily: 'Poppins, sans-serif' }}>
+            <p className="text-sm" style={{ fontFamily: 'Poppins, sans-serif' }}>
               {apiError ? (
                 <span className="text-red-400">Error: {apiError}</span>
               ) : candidates.length > 0 ? (
-                `Here are the top ${candidates.length} matches for "${searchQuery}"`
+                <span style={{ color: '#79D284' }}>{searchQuery}</span>
               ) : (
                 `No matches found for "${searchQuery}"`
               )}
             </p>
+            {candidates.length > 0 && (
+              <p className="text-white/60 text-xs mt-1" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                Found {candidates.length} results
+              </p>
+            )}
           </div>
           <button
             onClick={onClose}
@@ -145,7 +159,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             </div>
           ) : (
             candidates.map((candidate, index) => (
-            <div key={candidate.email || candidate.name} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden">
+            <div key={candidate.email || candidate.name} className="backdrop-blur-sm border rounded-xl overflow-hidden" style={{ backgroundColor: '#1a2332', borderColor: '#79D284' }}>
               {/* Clickable Card Header */}
               <div 
                 onClick={() => toggleCard(candidate.email || candidate.name)}
@@ -215,7 +229,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                   <div className="pt-4 mb-6">
                     {/* Real Time Tracking Box */}
                     <div className="mb-6">
-                      <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+                      <div className="border rounded-lg p-4" style={{ backgroundColor: '#1a2332', borderColor: '#4ade80', borderWidth: '0.5px' }}>
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
                             <h4 className="text-white/90 font-medium text-sm mb-1" style={{ fontFamily: 'Montserrat, sans-serif' }}>
@@ -318,10 +332,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
                     {/* Candidate Behavioral Data */}
                     {candidate.behavioral_data && (
-                      <div className="mb-6 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-3">
+                      <div className="mb-6 backdrop-blur-sm border rounded-xl p-3" style={{ backgroundColor: '#1a2332', borderColor: '#4ade80', borderWidth: '0.5px' }}>
                         <button
                           onClick={() => toggleBehavioralSection(candidate.email || candidate.name)}
-                          className="w-full flex items-center justify-between hover:bg-white/5 rounded-lg py-3 px-3 -m-2 transition-colors duration-200"
+                          className="w-full flex items-center justify-between rounded-lg py-3 px-3 -m-2"
                         >
                           <div className="flex items-center space-x-2">
                             <Brain size={16} className="text-blue-400" />
@@ -348,7 +362,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                               <div className="grid grid-cols-1 gap-3">
                               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                                 {/* Communication Maturity Index */}
-                                <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+                                <div className="border border-white/20 rounded-lg p-3" style={{ backgroundColor: '#1a2332' }}>
                                   <div className="flex items-center justify-between mb-2">
                                     <div className="flex items-center space-x-1 relative group">
                                       <TrendingUp size={12} className="text-blue-400" />
@@ -377,7 +391,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                                 </div>
 
                                 {/* Risk-Barrier Focus Score */}
-                                <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+                                <div className="border border-white/20 rounded-lg p-3" style={{ backgroundColor: '#1a2332' }}>
                                   <div className="flex items-center justify-between mb-2">
                                     <div className="flex items-center space-x-1 relative group">
                                       <Shield size={12} className="text-yellow-400" />
@@ -406,7 +420,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                                 </div>
 
                                 {/* Identity Alignment Signal */}
-                                <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+                                <div className="border border-white/20 rounded-lg p-3" style={{ backgroundColor: '#1a2332' }}>
                                   <div className="flex items-center justify-between mb-2">
                                     <div className="flex items-center space-x-1 relative group">
                                       <Heart size={12} className="text-purple-400" />
