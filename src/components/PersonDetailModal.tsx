@@ -87,7 +87,7 @@ const PersonDetailModal: React.FC<PersonDetailModalProps> = ({
               />
               <div 
                 className="initials-fallback hidden absolute inset-0 w-full h-full rounded-full flex items-center justify-center text-white font-semibold text-lg border-2 border-white/20"
-                style={{ backgroundColor: '#79D284' }}
+                style={{ backgroundColor: '#fb4b76' }}
               >
                 {getInitials(person.name)}
               </div>
@@ -127,11 +127,11 @@ const PersonDetailModal: React.FC<PersonDetailModalProps> = ({
               </div>
               <button
                 disabled={true}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-lg border cursor-not-allowed opacity-60 ${
-                  person.isTracking
-                    ? 'bg-green-500/20 border-green-500/30 text-green-400'
-                    : 'bg-white/10 border-white/20 text-white/70 hover:bg-white/20'
-                }`}
+                                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg border cursor-not-allowed opacity-60 ${
+                    person.isTracking
+                      ? 'bg-green-500/20 border-green-500/30 text-green-400'
+                      : 'bg-white/10 border-white/20 text-white/70 hover:bg-white/20'
+                  }`}
               >
                 {person.isTracking ? (
                   <>
@@ -152,7 +152,6 @@ const PersonDetailModal: React.FC<PersonDetailModalProps> = ({
             </div>
             <div className="bg-white/5 border border-white/10 rounded-lg p-3">
               <p className="text-white/80 text-xs" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                <span className="text-white/60">Reason: </span>
                 {person.trackingReason}
               </p>
             </div>

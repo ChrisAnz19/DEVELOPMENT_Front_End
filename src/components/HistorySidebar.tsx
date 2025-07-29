@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Trash2 } from 'lucide-react';
 
 interface HistoryItem {
   id: string;
@@ -16,9 +16,10 @@ interface HistorySidebarProps {
   onSelectHistory: (historyItem: HistoryItem) => void;
   onClose: () => void;
   onClearHistory: () => void;
+  onDeleteHistoryItem?: (itemId: string) => void;
 }
 
-const HistorySidebar: React.FC<HistorySidebarProps> = ({ isVisible, history, onSelectHistory, onClose, onClearHistory }) => {
+const HistorySidebar: React.FC<HistorySidebarProps> = ({ isVisible, history, onSelectHistory, onClose, onClearHistory, onDeleteHistoryItem }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
@@ -76,7 +77,7 @@ const HistorySidebar: React.FC<HistorySidebarProps> = ({ isVisible, history, onS
   return (
     <>
       {/* Background - Always rendered */}
-      <div className={`fixed left-0 top-0 bottom-0 w-64 z-40 border-r border-white/20 transition-transform duration-300 ${isVisible ? 'translate-x-0' : '-translate-x-full'}`} style={{ backgroundColor: '#5B4EDB' }}>
+      <div className={`fixed left-0 top-0 bottom-0 w-64 z-40 border-r border-white/20 transition-transform duration-300 ${isVisible ? 'translate-x-0' : '-translate-x-full'}`} style={{ backgroundColor: '#1a2332' }}>
         {/* Content Container */}
         <div className={`h-full flex flex-col transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
         
@@ -113,52 +114,66 @@ const HistorySidebar: React.FC<HistorySidebarProps> = ({ isVisible, history, onS
             {Object.entries(groupedHistory).map(([dateGroup, items]) => (
               <div key={dateGroup} className="mb-4">
                 {/* Date Header */}
-                <h3 className="text-white/70 text-xs font-medium mb-2 sticky top-0 backdrop-blur-sm py-1 px-2 rounded" style={{ backgroundColor: 'rgba(91, 78, 219, 0.9)' }} 
-                    style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                <h3 className="text-white/70 text-xs font-medium mb-2 sticky top-0 backdrop-blur-sm py-1 px-2 rounded" style={{ backgroundColor: 'rgba(26, 35, 50, 0.9)', fontFamily: 'Clash Display, sans-serif' }}>
                   {dateGroup}
                 </h3>
                 
                 {/* History Items for this date */}
                 <div className="space-y-1.5">
                   {items.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => onSelectHistory(item)}
-                      className="w-full text-left group bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-lg p-2 transition-all duration-200"
-                    >
-                      <div className="flex items-start space-x-2">
-                        {/* Status indicator */}
-                        <div className="flex-shrink-0 mt-1">
-                          {item.results ? (
-                            item.results.candidates?.length === 0 ? (
-                              <div className="w-2 h-2 bg-red-400 rounded-full" title="Search completed with no results" />
+                    <div key={item.id} className="group relative">
+                      <button
+                        onClick={() => onSelectHistory(item)}
+                        className="w-full text-left group bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-lg p-2 transition-all duration-200 pr-8"
+                      >
+                        <div className="flex items-start space-x-2">
+                          {/* Status indicator */}
+                          <div className="flex-shrink-0 mt-1">
+                            {item.results ? (
+                              item.results.candidates?.length === 0 ? (
+                                <div className="w-2 h-2 bg-red-400 rounded-full" title="Search completed with no results" />
+                              ) : (
+                                <div className="w-2 h-2 bg-pink-400 rounded-full" title="Search completed successfully" />
+                              )
+                            ) : item.error ? (
+                              <div className="w-2 h-2 bg-red-400 rounded-full" title="Search failed" />
                             ) : (
-                              <div className="w-2 h-2 bg-green-400 rounded-full" title="Search completed successfully" />
-                            )
-                          ) : item.error ? (
-                            <div className="w-2 h-2 bg-red-400 rounded-full" title="Search failed" />
-                          ) : (
-                            <div className="w-2 h-2 bg-yellow-400 rounded-full" title="No results stored" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-white/80 text-[10px] font-medium mb-1 line-clamp-2 group-hover:text-white truncate" 
-                             style={{ fontFamily: 'Poppins, sans-serif' }}>
-                            {item.query}
-                          </p>
-                          <div className="flex items-center justify-between">
-                            <span className="text-white/50 text-[9px]" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                              {formatTime(item.timestamp)}
-                            </span>
-                            {item.results && (
-                              <span className={`text-[8px] font-medium ${item.results.candidates?.length === 0 ? 'text-red-400' : 'text-green-400'}`} style={{ fontFamily: 'Poppins, sans-serif' }}>
-                                {item.results.candidates?.length || 0} results
-                              </span>
+                              <div className="w-2 h-2 bg-yellow-400 rounded-full" title="No results stored" />
                             )}
                           </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-white/80 text-[10px] font-medium mb-1 line-clamp-2 group-hover:text-white truncate" 
+                               style={{ fontFamily: 'Clash Display, sans-serif' }}
+                               title={item.query}>
+                              {item.query}
+                            </p>
+                            <div className="flex items-center justify-between">
+                              <span className="text-white/50 text-[9px]" style={{ fontFamily: 'Clash Display, sans-serif' }}>
+                                {formatTime(item.timestamp)}
+                              </span>
+                              {item.results && (
+                                <span className={`text-[8px] font-medium ${item.results.candidates?.length === 0 ? 'text-red-400' : 'text-pink-400'}`} style={{ fontFamily: 'Clash Display, sans-serif' }}>
+                                  {item.results.candidates?.length || 0} results
+                                </span>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </button>
+                      </button>
+                      {/* Delete button */}
+                      {onDeleteHistoryItem && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDeleteHistoryItem(item.id);
+                          }}
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 text-white/50 hover:text-red-400 hover:bg-red-400/10 p-1 rounded transition-all duration-200"
+                          title="Delete this search"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>
@@ -166,7 +181,7 @@ const HistorySidebar: React.FC<HistorySidebarProps> = ({ isVisible, history, onS
             
             {filteredHistory.length === 0 && searchTerm && (
               <div className="text-center py-6">
-                <p className="text-white/60 text-xs" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                <p className="text-white/60 text-xs" style={{ fontFamily: 'Clash Display, sans-serif' }}>
                   No matches found
                 </p>
               </div>
@@ -174,7 +189,7 @@ const HistorySidebar: React.FC<HistorySidebarProps> = ({ isVisible, history, onS
             
             {history.length === 0 && (
               <div className="text-center py-6">
-                <p className="text-white/60 text-xs" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                <p className="text-white/60 text-xs" style={{ fontFamily: 'Clash Display, sans-serif' }}>
                   No history yet
                 </p>
               </div>
@@ -186,9 +201,9 @@ const HistorySidebar: React.FC<HistorySidebarProps> = ({ isVisible, history, onS
             <button
               onClick={handleClearHistory}
               className="group relative overflow-hidden w-full flex items-center justify-center space-x-1 bg-white/10 border border-white/20 rounded-lg px-2 py-1.5 text-white/70 hover:text-white transition-all duration-200 text-xs"
-              style={{ fontFamily: 'Poppins, sans-serif' }}
+              style={{ fontFamily: 'Clash Display, sans-serif' }}
             >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ backgroundColor: '#79D284' }}></div>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ backgroundColor: '#fb4b76' }}></div>
               <span className="relative z-10">Clear History</span>
             </button>
           </div>
@@ -207,24 +222,24 @@ const HistorySidebar: React.FC<HistorySidebarProps> = ({ isVisible, history, onS
       {showClearConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 max-w-sm mx-4 shadow-2xl">
-            <h3 className="text-white text-lg font-semibold mb-3" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+            <h3 className="text-white text-lg font-semibold mb-3" style={{ fontFamily: 'Clash Display, sans-serif' }}>
               Clear History
             </h3>
-            <p className="text-white/80 text-sm mb-6" style={{ fontFamily: 'Poppins, sans-serif' }}>
+            <p className="text-white/80 text-sm mb-6" style={{ fontFamily: 'Clash Display, sans-serif' }}>
               Are you sure you want to delete your search history? This action cannot be undone.
             </p>
             <div className="flex space-x-3">
               <button
                 onClick={cancelClearHistory}
                 className="flex-1 bg-white/10 backdrop-blur-sm border border-white/20 text-white font-medium py-2 px-4 rounded-xl hover:bg-white/20 transition-all duration-200 text-sm"
-                style={{ fontFamily: 'Poppins, sans-serif' }}
+                style={{ fontFamily: 'Clash Display, sans-serif' }}
               >
                 Cancel
               </button>
               <button
                 onClick={confirmClearHistory}
                 className="flex-1 bg-red-600/80 backdrop-blur-sm border border-red-500/50 text-white font-medium py-2 px-4 rounded-xl hover:bg-red-600 transition-all duration-200 text-sm"
-                style={{ fontFamily: 'Poppins, sans-serif' }}
+                style={{ fontFamily: 'Clash Display, sans-serif' }}
               >
                 Delete
               </button>

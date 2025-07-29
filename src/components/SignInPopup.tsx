@@ -65,7 +65,7 @@ const SignInPopup: React.FC<SignInPopupProps> = ({ isVisible, onClose, onSwitchT
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/10">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#79D284' }}>
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#fb4b76' }}>
               <User size={16} className="text-white" />
             </div>
             <h2 className="text-white text-lg font-semibold" style={{ fontFamily: 'Montserrat, sans-serif' }}>
@@ -75,7 +75,7 @@ const SignInPopup: React.FC<SignInPopupProps> = ({ isVisible, onClose, onSwitchT
           <button
             onClick={onClose}
             className="text-white/70 hover:text-white p-1 transition-all duration-200"
-            onMouseEnter={(e) => e.currentTarget.style.color = '#79D284'}
+            onMouseEnter={(e) => e.currentTarget.style.color = '#fb4b76'}
             onMouseLeave={(e) => e.currentTarget.style.color = ''}
           >
             <X size={20} />
@@ -91,7 +91,7 @@ const SignInPopup: React.FC<SignInPopupProps> = ({ isVisible, onClose, onSwitchT
           {/* Error Message */}
           {submitError && (
             <div className="mb-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
-              <p className="text-red-400 text-sm text-center" style={{ fontFamily: 'Poppins, sans-serif' }}>
+              <p className="text-red-400 text-sm text-center" style={{ fontFamily: 'Clash Display, sans-serif' }}>
                 {submitError}
               </p>
             </div>
@@ -106,11 +106,8 @@ const SignInPopup: React.FC<SignInPopupProps> = ({ isVisible, onClose, onSwitchT
                 value={formData.email}
                 onChange={handleInputChange}
                 placeholder="Email address"
-                className="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-4 py-3 text-white placeholder-white/50 text-sm focus:outline-none transition-all duration-200"
-                style={{ fontFamily: 'Poppins, sans-serif' }}
-                onFocus={(e) => { e.target.style.borderColor = '#79D284'; e.target.style.backgroundColor = 'rgba(255,255,255,0.2)'; }}
-                onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.backgroundColor = ''; }}
-                style={{ fontFamily: 'Poppins, sans-serif' }}
+                className="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-4 py-3 text-white placeholder-white/50 text-sm focus:outline-none focus:border-pink-500 transition-all duration-200"
+                style={{ fontFamily: 'Clash Display, sans-serif' }}
                 required
               />
             </div>
@@ -123,11 +120,8 @@ const SignInPopup: React.FC<SignInPopupProps> = ({ isVisible, onClose, onSwitchT
                 value={formData.password}
                 onChange={handleInputChange}
                 placeholder="Password"
-                className="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-4 py-3 text-white placeholder-white/50 text-sm focus:outline-none transition-all duration-200"
-                style={{ fontFamily: 'Poppins, sans-serif' }}
-                onFocus={(e) => { e.target.style.borderColor = '#79D284'; e.target.style.backgroundColor = 'rgba(255,255,255,0.2)'; }}
-                onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.backgroundColor = ''; }}
-                style={{ fontFamily: 'Poppins, sans-serif' }}
+                className="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-4 py-3 text-white placeholder-white/50 text-sm focus:outline-none focus:border-pink-500 transition-all duration-200"
+                style={{ fontFamily: 'Clash Display, sans-serif' }}
                 required
               />
             </div>
@@ -136,8 +130,8 @@ const SignInPopup: React.FC<SignInPopupProps> = ({ isVisible, onClose, onSwitchT
               type="submit"
               disabled={isSubmitting}
               className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 text-sm"
-              style={{ fontFamily: 'Poppins, sans-serif' }}
-              onMouseEnter={(e) => { if (!isSubmitting) { e.currentTarget.style.backgroundColor = '#79D284'; e.currentTarget.style.borderColor = '#79D284'; } }}
+              style={{ fontFamily: 'Clash Display, sans-serif' }}
+              onMouseEnter={(e) => { if (!isSubmitting) { e.currentTarget.style.backgroundColor = '#fb4b76'; e.currentTarget.style.borderColor = '#fb4b76'; } }}
               onMouseLeave={(e) => { if (!isSubmitting) { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.borderColor = ''; } }}
             >
               {isSubmitting ? 'Signing In...' : 'Sign In'}
@@ -147,7 +141,7 @@ const SignInPopup: React.FC<SignInPopupProps> = ({ isVisible, onClose, onSwitchT
           {/* Divider */}
           <div className="flex items-center mb-6">
             <div className="flex-1 h-px bg-white/20"></div>
-            <span className="px-3 text-white/50 text-xs" style={{ fontFamily: 'Poppins, sans-serif' }}>
+            <span className="px-3 text-white/50 text-xs" style={{ fontFamily: 'Clash Display, sans-serif' }}>
               or
             </span>
             <div className="flex-1 h-px bg-white/20"></div>
@@ -155,14 +149,14 @@ const SignInPopup: React.FC<SignInPopupProps> = ({ isVisible, onClose, onSwitchT
 
           {/* Sign Up Section */}
           <div className="text-center">
-            <p className="text-white/70 text-sm mb-3" style={{ fontFamily: 'Poppins, sans-serif' }}>
+            <p className="text-white/70 text-sm mb-3" style={{ fontFamily: 'Clash Display, sans-serif' }}>
               Don't have an account?
             </p>
             <button
               onClick={onSwitchToSignUp}
               className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 text-sm"
-              style={{ fontFamily: 'Poppins, sans-serif' }}
-              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#79D284'; e.currentTarget.style.borderColor = '#79D284'; }}
+              style={{ fontFamily: 'Clash Display, sans-serif' }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#fb4b76'; e.currentTarget.style.borderColor = '#fb4b76'; }}
               onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.borderColor = ''; }}
             >
               Create Account
@@ -173,8 +167,8 @@ const SignInPopup: React.FC<SignInPopupProps> = ({ isVisible, onClose, onSwitchT
           <div className="text-center mt-4">
             <button 
               className="text-white/60 text-xs transition-colors duration-200" 
-              style={{ fontFamily: 'Poppins, sans-serif' }}
-              onMouseEnter={(e) => e.currentTarget.style.color = '#79D284'}
+              style={{ fontFamily: 'Clash Display, sans-serif' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#fb4b76'}
               onMouseLeave={(e) => e.currentTarget.style.color = ''}
             >
               Forgot your password?

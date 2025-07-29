@@ -115,10 +115,8 @@ const ExclusionsModal: React.FC<ExclusionsModalProps> = ({ isVisible, onClose })
             <button
               type="submit"
               disabled={isAdding || !newLinkedinUrl.trim()}
-              className="flex items-center space-x-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium px-4 py-2.5 rounded-lg hover:opacity-90 transition-opacity duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               className="flex items-center space-x-2 text-white font-medium px-4 py-2.5 rounded-lg hover:opacity-90 transition-opacity duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ backgroundColor: '#79D284' }}
-              style={{ fontFamily: 'Poppins, sans-serif' }}
+              style={{ backgroundColor: '#fb4b76', fontFamily: 'Poppins, sans-serif' }}
             >
               <Plus size={16} />
               <span>{isAdding ? 'Adding...' : 'Add'}</span>

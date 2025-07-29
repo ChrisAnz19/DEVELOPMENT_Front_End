@@ -146,7 +146,7 @@ const TrackingModal: React.FC<TrackingModalProps> = ({
                           />
                           <div 
                             className="initials-fallback hidden absolute inset-0 w-full h-full rounded-full flex items-center justify-center text-white font-semibold text-sm border-2 border-white/20"
-                            style={{ backgroundColor: '#79D284' }}
+                            style={{ backgroundColor: '#fb4b76' }}
                           >
                             {getInitials(person.name)}
                           </div>
@@ -237,11 +237,11 @@ const TrackingModal: React.FC<TrackingModalProps> = ({
                             e.stopPropagation();
                             handleToggleTracking(person.id);
                           }}
-                          className={`flex items-center justify-center w-8 h-8 rounded-full border transition-all duration-200 ${
-                            person.isTracking
-                              ? 'bg-green-500/20 border-green-500/30 text-green-400 hover:bg-green-500/30'
-                              : 'bg-white/10 border-white/20 text-white/50 hover:bg-white/20'
-                          }`}
+                                                      className={`flex items-center justify-center w-8 h-8 rounded-full border transition-all duration-200 ${
+                              person.isTracking
+                                ? 'bg-green-500/20 border-green-500/30 text-green-400 hover:bg-green-500/30'
+                                : 'bg-white/10 border-white/20 text-white/50 hover:bg-white/20'
+                            }`}
                         >
                           {person.isTracking ? (
                             <Eye size={14} />

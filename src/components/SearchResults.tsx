@@ -112,18 +112,18 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             <h2 className="text-white text-lg sm:text-xl font-semibold mb-1" style={{ fontFamily: 'Montserrat, sans-serif' }}>
               Search Results
             </h2>
-            <p className="text-sm" style={{ fontFamily: 'Poppins, sans-serif' }}>
+            <p className="text-sm text-white/80" style={{ fontFamily: 'Poppins, sans-serif' }}>
               {apiError ? (
                 <span className="text-red-400">Error: {apiError}</span>
               ) : candidates.length > 0 ? (
-                <span style={{ color: '#79D284' }}>{searchQuery}</span>
+                <span style={{ color: '#fb4b76' }}>{searchQuery}</span>
               ) : (
                 `No matches found for "${searchQuery}"`
               )}
             </p>
             {candidates.length > 0 && (
               <p className="text-white/60 text-xs mt-1" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                Found {candidates.length} results
+                Found {candidates.length} results. Here are the top {candidates.length}. <span className="text-blue-400 font-medium">Upgrade for more</span>
               </p>
             )}
           </div>
@@ -159,7 +159,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             </div>
           ) : (
             candidates.map((candidate, index) => (
-            <div key={candidate.email || candidate.name} className="backdrop-blur-sm border rounded-xl overflow-hidden" style={{ backgroundColor: '#1a2332', borderColor: '#79D284' }}>
+            <div key={candidate.email || candidate.name} className="backdrop-blur-sm border rounded-xl overflow-hidden" style={{ backgroundColor: '#1a2332', borderColor: '#fb4b76' }}>
               {/* Clickable Card Header */}
               <div 
                 onClick={() => toggleCard(candidate.email || candidate.name)}
@@ -185,7 +185,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                     />
                     <div 
                       className="initials-fallback hidden absolute inset-0 w-full h-full rounded-full flex items-center justify-center text-white font-semibold text-lg border-2 border-white/20"
-                      style={{ backgroundColor: '#79D284' }}
+                      style={{ backgroundColor: '#fb4b76' }}
                     >
                       {getInitials(candidate.name)}
                     </div>
@@ -206,8 +206,8 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                   
                   {/* Match Score */}
                   <div className="flex items-center space-x-1 bg-white/10 rounded-full px-2 py-1">
-                    <Target size={12} className="text-green-400" />
-                    <span className="text-green-400 font-medium text-xs" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                    <Target size={12} className="text-pink-400" />
+                    <span className="text-pink-400 font-medium text-xs" style={{ fontFamily: 'Poppins, sans-serif' }}>
                       {candidate.accuracy}%
                     </span>
                   </div>
@@ -229,7 +229,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                   <div className="pt-4 mb-6">
                     {/* Real Time Tracking Box */}
                     <div className="mb-6">
-                      <div className="border rounded-lg p-4" style={{ backgroundColor: '#1a2332', borderColor: '#4ade80', borderWidth: '0.5px' }}>
+                      <div className="border rounded-lg p-4" style={{ backgroundColor: '#1a2332', borderColor: '#fb4b76', borderWidth: '0.5px' }}>
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
                             <h4 className="text-white/90 font-medium text-sm mb-1" style={{ fontFamily: 'Montserrat, sans-serif' }}>
@@ -321,7 +321,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                       <ul className="space-y-3">
                         {candidate.reasons.map((reason, reasonIndex) => (
                           <li key={reasonIndex} className="flex items-start space-x-2">
-                            <div className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0" style={{ backgroundColor: '#79D284' }}></div>
+                            <div className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0" style={{ backgroundColor: '#fb4b76' }}></div>
                             <span className="text-white/70 text-xs sm:text-sm leading-relaxed" style={{ fontFamily: 'Poppins, sans-serif' }}>
                               {reason}
                             </span>
@@ -332,7 +332,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
                     {/* Candidate Behavioral Data */}
                     {candidate.behavioral_data && (
-                      <div className="mb-6 backdrop-blur-sm border rounded-xl p-3" style={{ backgroundColor: '#1a2332', borderColor: '#4ade80', borderWidth: '0.5px' }}>
+                      <div className="mb-6 backdrop-blur-sm border rounded-xl p-3" style={{ backgroundColor: '#1a2332', borderColor: '#fb4b76', borderWidth: '0.5px' }}>
                         <button
                           onClick={() => toggleBehavioralSection(candidate.email || candidate.name)}
                           className="w-full flex items-center justify-between rounded-lg py-3 px-3 -m-2"
@@ -502,7 +502,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             className="group relative overflow-hidden w-full text-white font-medium py-2.5 sm:py-3 px-4 rounded-xl border border-white/20 transition-all duration-200 text-sm sm:text-base"
             style={{ fontFamily: 'Poppins, sans-serif' }}
           >
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ backgroundColor: '#79D284' }}></div>
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ backgroundColor: '#fb4b76' }}></div>
             <span className="relative z-10">Push to CRM</span>
           </button>
           </div>

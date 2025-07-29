@@ -76,7 +76,7 @@ const SignUpPopup: React.FC<SignUpPopupProps> = ({ isVisible, onClose, onSwitchT
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/10">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#79D284' }}>
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#fb4b76' }}>
               <User size={16} className="text-white" />
             </div>
             <h2 className="text-white text-lg font-semibold" style={{ fontFamily: 'Montserrat, sans-serif' }}>
@@ -147,7 +147,7 @@ const SignUpPopup: React.FC<SignUpPopupProps> = ({ isVisible, onClose, onSwitchT
                 onChange={handleInputChange}
                 placeholder="Email address"
                 className="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-white/50 text-sm focus:outline-none focus:border-white/40 focus:bg-white/20 transition-all duration-200"
-                style={{ fontFamily: 'Poppins, sans-serif' }}
+                style={{ fontFamily: 'Clash Display, sans-serif' }}
                 required
               />
             </div>
@@ -162,7 +162,7 @@ const SignUpPopup: React.FC<SignUpPopupProps> = ({ isVisible, onClose, onSwitchT
                 onChange={handleInputChange}
                 placeholder="Password"
                 className="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-12 py-2.5 text-white placeholder-white/50 text-sm focus:outline-none focus:border-white/40 focus:bg-white/20 transition-all duration-200"
-                style={{ fontFamily: 'Poppins, sans-serif' }}
+                style={{ fontFamily: 'Clash Display, sans-serif' }}
                 required
               />
               <button
@@ -184,7 +184,7 @@ const SignUpPopup: React.FC<SignUpPopupProps> = ({ isVisible, onClose, onSwitchT
                 onChange={handleInputChange}
                 placeholder="Company name"
                 className="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-white/50 text-sm focus:outline-none focus:border-white/40 focus:bg-white/20 transition-all duration-200"
-                style={{ fontFamily: 'Poppins, sans-serif' }}
+                style={{ fontFamily: 'Clash Display, sans-serif' }}
                 required
               />
             </div>
@@ -199,7 +199,7 @@ const SignUpPopup: React.FC<SignUpPopupProps> = ({ isVisible, onClose, onSwitchT
                 onChange={handleInputChange}
                 placeholder="Company website"
                 className="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-white/50 text-sm focus:outline-none focus:border-white/40 focus:bg-white/20 transition-all duration-200"
-                style={{ fontFamily: 'Poppins, sans-serif' }}
+                style={{ fontFamily: 'Clash Display, sans-serif' }}
                 required
               />
             </div>
@@ -208,8 +208,7 @@ const SignUpPopup: React.FC<SignUpPopupProps> = ({ isVisible, onClose, onSwitchT
               type="submit"
               disabled={isSubmitting}
               className="w-full text-white font-medium py-2.5 px-4 rounded-lg hover:opacity-90 transition-opacity duration-200 text-sm mt-4"
-              style={{ backgroundColor: '#79D284' }}
-              style={{ fontFamily: 'Poppins, sans-serif' }}
+              style={{ backgroundColor: '#fb4b76', fontFamily: 'Clash Display, sans-serif' }}
             >
               {isSubmitting ? 'Creating Account...' : 'Create Account'}
             </button>
@@ -217,7 +216,7 @@ const SignUpPopup: React.FC<SignUpPopupProps> = ({ isVisible, onClose, onSwitchT
 
           {/* Terms */}
           <div className="text-center mt-4">
-            <p className="text-white/50 text-xs leading-relaxed" style={{ fontFamily: 'Poppins, sans-serif' }}>
+            <p className="text-white/50 text-xs leading-relaxed" style={{ fontFamily: 'Clash Display, sans-serif' }}>
               By creating an account, you agree to our{' '}
               <button className="text-white/70 hover:text-white/90 underline transition-colors duration-200">
                 Terms of Service

@@ -31,7 +31,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleHistory, showHistoryButton = fa
           <img 
             src="/logo.png" 
             alt="Company Logo" 
-            className="h-8 sm:h-10 w-auto object-contain"
+            className="h-12 sm:h-15 w-auto object-contain"
             onError={(e) => {
               console.log('Logo failed to load');
               // Fallback to text if image fails
@@ -56,7 +56,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleHistory, showHistoryButton = fa
               className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1.5 hover:bg-white/20 transition-all duration-200"
             >
               {/* Initials Circle */}
-              <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: '#79D284' }}>
+                              <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: '#fb4b76' }}>
                 <span className="text-white text-xs font-semibold" style={{ fontFamily: 'Montserrat, sans-serif' }}>
                   {userProfile 
                     ? `${userProfile.first_name.charAt(0).toUpperCase()}${userProfile.last_name.charAt(0).toUpperCase()}`

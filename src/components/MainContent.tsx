@@ -57,7 +57,7 @@ const MainContent: React.FC<MainContentProps> = ({ onSearch, pendingSearch = '' 
     <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-16">
       {/* Headers */}
       <div className="text-center mb-6 sm:mb-8 max-w-4xl">
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-medium max-w-xs sm:max-w-md mx-auto px-2" style={{ fontFamily: 'Montserrat, sans-serif', color: '#FFFFFF' }}>
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-medium max-w-xs sm:max-w-md mx-auto px-2" style={{ fontFamily: 'Montserrat, sans-serif', color: '#FFFFFF', filter: 'brightness(1.3)' }}>
           Who do you want to find?
         </h2>
       </div>
@@ -72,9 +72,9 @@ const MainContent: React.FC<MainContentProps> = ({ onSearch, pendingSearch = '' 
                 key={index}
                 onClick={() => handlePillClick(pill)}
                 className="group relative overflow-hidden bg-transparent rounded-full px-2 sm:px-3 py-1 sm:py-1.5 text-white hover:border-transparent transition-all duration-300 h-7 sm:h-8 flex items-center text-center mb-1 sm:mb-0"
-                style={{ fontFamily: 'Poppins, sans-serif', border: '1px solid #22f9ea' }}
+                style={{ fontFamily: 'Poppins, sans-serif', border: '1px solid #fb4b76' }}
               >
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ backgroundColor: '#79D284' }}></div>
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ backgroundColor: '#fb4b76' }}></div>
                 <span className="relative z-10 font-medium text-[9px] sm:text-[11px] leading-tight">
                   {pill}
                 </span>
@@ -89,9 +89,9 @@ const MainContent: React.FC<MainContentProps> = ({ onSearch, pendingSearch = '' 
                 key={index + topRowPills.length}
                 onClick={() => handlePillClick(pill)}
                 className="group relative overflow-hidden bg-transparent rounded-full px-2 sm:px-3 py-1 sm:py-1.5 text-white hover:border-transparent transition-all duration-300 h-7 sm:h-8 flex items-center text-center mb-1 sm:mb-0"
-                style={{ fontFamily: 'Poppins, sans-serif', border: '1px solid #22f9ea' }}
+                style={{ fontFamily: 'Poppins, sans-serif', border: '1px solid #fb4b76' }}
               >
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ backgroundColor: '#79D284' }}></div>
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ backgroundColor: '#fb4b76' }}></div>
                 <span className="relative z-10 font-medium text-[9px] sm:text-[11px] leading-tight">
                   {pill}
                 </span>
@@ -103,7 +103,7 @@ const MainContent: React.FC<MainContentProps> = ({ onSearch, pendingSearch = '' 
       {/* Large Centered Input */}
       <div className="w-full max-w-xs sm:max-w-lg md:max-w-2xl px-2">
         <form onSubmit={handleSubmit} className="relative">
-          <div className="backdrop-blur-sm rounded-3xl shadow-2xl" style={{ backgroundColor: '#1B2A5C', border: '1px solid #22f9ea' }}>
+          <div className="backdrop-blur-sm rounded-3xl shadow-2xl" style={{ backgroundColor: '#1B2A5C', border: '1px solid #fb4b76' }}>
             {/* Large Input Field */}
             <textarea
               value={input}
@@ -121,7 +121,7 @@ const MainContent: React.FC<MainContentProps> = ({ onSearch, pendingSearch = '' 
               <button
                 type="button"
                 className="hover:opacity-80 transition-colors duration-200"
-                style={{ color: '#79D284' }}
+                style={{ color: '#fb4b76' }}
               >
                 <Paperclip size={18} className="sm:w-5 sm:h-5" />
               </button>
@@ -134,7 +134,7 @@ const MainContent: React.FC<MainContentProps> = ({ onSearch, pendingSearch = '' 
                 type="submit"
                 disabled={!input.trim()}
                 className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 text-white rounded-full transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{ backgroundColor: '#79D284' }}
+                style={{ backgroundColor: '#fb4b76' }}
               >
                 <ArrowUp size={14} className="sm:w-4 sm:h-4" />
               </button>

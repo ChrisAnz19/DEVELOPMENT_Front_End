@@ -79,6 +79,7 @@ function App() {
     setSearchQuery(query);
     setShowResults(false);
     setApiSearchResults(null);
+    console.log('🎯 Setting isLoading to true');
     setIsLoading(true);
     
     // Perform actual API search
@@ -206,6 +207,17 @@ function App() {
     // Clear from Supabase if user is authenticated
     if (user?.id) {
       clearSearchHistory(user.id);
+    }
+  };
+
+  const handleDeleteHistoryItem = (itemId: string) => {
+    setSearchHistory(prev => prev.filter(item => item.id !== itemId));
+    
+    // Delete from Supabase if user is authenticated
+    if (user?.id) {
+      // Note: You'll need to implement deleteSearchHistoryItem in your Supabase functions
+      // For now, we'll just update the local state
+      console.log('Deleting history item:', itemId);
     }
   };
 
@@ -352,9 +364,9 @@ function App() {
 
   return (
     <>
-      <div className="min-h-screen flex flex-col relative overflow-hidden bg-gradient-to-b from-[#0E1D18] via-[#1e1465] to-[#5B4EDB]" style={{ backgroundImage: 'linear-gradient(to bottom, #0E1D18 0%, #1e1465 69%, #5B4EDB 100%)' }}>
-        {/* Background Pattern */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.03)_0%,transparent_50%)]"></div>
+      <div className="min-h-screen flex flex-col relative overflow-hidden" style={{ backgroundImage: 'url(/background.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
+        {/* Background Overlay */}
+        <div className="absolute inset-0 bg-black/40"></div>
         
         <Header 
           onLoginClick={() => setShowSignInPopup(true)}
@@ -369,9 +381,9 @@ function App() {
               <button
                 onClick={handleToggleHistory}
                 className="flex items-center space-x-2 backdrop-blur-sm border border-white/20 rounded-full px-4 py-3 text-white transition-all duration-200 shadow-lg"
-                style={{ backgroundColor: '#5B4EDB' }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#79D284'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#5B4EDB'; }}
+                style={{ backgroundColor: '#1a2332' }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#fb4b76'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#1a2332'; }}
               >
                 <History size={16} />
                 <span className="text-sm font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>History</span>
@@ -383,9 +395,9 @@ function App() {
               <button
                 onClick={handleToggleTrackingModal}
                 className="flex items-center space-x-2 backdrop-blur-sm border border-white/20 rounded-full px-4 py-3 text-white transition-all duration-200 shadow-lg"
-                style={{ backgroundColor: '#5B4EDB' }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#79D284'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#5B4EDB'; }}
+                style={{ backgroundColor: '#1a2332' }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#fb4b76'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#1a2332'; }}
               >
                 <span className="text-sm font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>Tracking</span>
               </button>
@@ -425,6 +437,7 @@ function App() {
         onSelectHistory={handleSelectHistory}
         onClose={handleCloseHistory}
         onClearHistory={handleClearHistory}
+        onDeleteHistoryItem={handleDeleteHistoryItem}
       />
       
       <LoadingOverlay isVisible={isLoading} />
