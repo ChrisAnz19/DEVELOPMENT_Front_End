@@ -6,7 +6,7 @@ interface LoadingOverlayProps {
 }
 
 const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ isVisible }) => {
-  console.log('🎯 LoadingOverlay isVisible:', isVisible);
+
   if (!isVisible) return null;
 
   return (

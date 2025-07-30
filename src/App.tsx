@@ -79,7 +79,7 @@ function App() {
     setSearchQuery(query);
     setShowResults(false);
     setApiSearchResults(null);
-    console.log('🎯 Setting isLoading to true');
+    
     setIsLoading(true);
     
     // Perform actual API search
@@ -113,6 +113,7 @@ function App() {
         console.log('Polling for KnowledgeGPT results...');
         const result = await pollSearchResult(requestId);
         console.log('KnowledgeGPT Search completed:', result);
+
         
         if (result.status === 'completed') {
           setApiSearchResults(result);

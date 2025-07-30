@@ -24,6 +24,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   onToggleTracking,
   getTrackingStatus
 }) => {
+
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [showPhoneNumbers, setShowPhoneNumbers] = useState<Set<string>>(new Set());
   const [expandedBehavioralSections, setExpandedBehavioralSections] = useState<Set<string>>(new Set());
@@ -123,7 +124,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             </p>
             {candidates.length > 0 && (
               <p className="text-white/60 text-xs mt-1" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                Found {candidates.length} results. Here are the top {candidates.length}. <span className="text-blue-400 font-medium">Upgrade for more</span>
+                Found {searchResults?.estimated_count || candidates.length} results. Here are the top {candidates.length}. <span className="text-blue-400 font-medium">Upgrade for more</span>
               </p>
             )}
           </div>

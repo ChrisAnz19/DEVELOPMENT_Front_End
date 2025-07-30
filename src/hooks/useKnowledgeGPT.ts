@@ -61,6 +61,7 @@ export interface SearchResponse {
     reasoning: string;
   };
   candidates?: Candidate[];
+  estimated_count?: number;
   error?: string;
   created_at: string;
   completed_at?: string;
@@ -160,7 +161,9 @@ export const useKnowledgeGPT = (): UseKnowledgeGPT => {
         throw new Error(errorData.detail || errorData.error || `HTTP error! status: ${response.status}`);
       }
       
-      return await response.json();
+      const data = await response.json();
+
+      return data;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to get search result';
       setError(errorMessage);
