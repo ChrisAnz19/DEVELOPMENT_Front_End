@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { History } from 'lucide-react';
-import { useKnowledgeGPT, SearchResponse } from './hooks/useKnowledgeGPT';
+import { useKnowledgeGPT, SearchResponse, Candidate } from './hooks/useKnowledgeGPT';
 import { useAuth } from './hooks/useAuth';
 import { useSearchApi } from './hooks/useSearchApi'; // New import for useSearchApi
 import { 
@@ -35,6 +35,7 @@ function App() {
   const [showSignUpPopup, setShowSignUpPopup] = useState(false);
   const [showTrackingModal, setShowTrackingModal] = useState(false);
   const [apiSearchResults, setApiSearchResults] = useState<SearchResponse | null>(null);
+  const [currentSearchError, setCurrentSearchError] = useState<string | null>(null);
   const [showErrorPopup, setShowErrorPopup] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [newApiSearchId, setNewApiSearchId] = useState<number | null>(null); // New state for the new API's search ID
@@ -79,6 +80,7 @@ function App() {
     setSearchQuery(query);
     setShowResults(false);
     setApiSearchResults(null);
+    setCurrentSearchError(null); // Clear any previous search error
     
     setIsLoading(true);
     
@@ -120,7 +122,9 @@ function App() {
           setShowResults(true);
         } else if (result.status === 'failed') {
           console.error('KnowledgeGPT Search failed:', result.error);
-          setErrorMessage(result.error || 'Search failed');
+          const errorMsg = result.error || 'Search failed';
+          setCurrentSearchError(errorMsg);
+          setErrorMessage(errorMsg);
           setShowErrorPopup(true);
         }
         
@@ -145,6 +149,7 @@ function App() {
       } catch (error) {
         console.error('Search error:', error);
         const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        setCurrentSearchError(errorMessage);
         setErrorMessage(errorMessage);
         setShowErrorPopup(true);
         
@@ -171,6 +176,7 @@ function App() {
   const handleCloseResults = () => {
     setShowResults(false);
     setNewApiSearchId(null); // Clear the search ID when results are closed
+    setCurrentSearchError(null); // Clear the current search error
     // Don't automatically show history - let user choose
   };
 
@@ -183,9 +189,11 @@ function App() {
     if (historyItem.results) {
       // Show stored results
       setApiSearchResults(historyItem.results);
+      setCurrentSearchError(null); // Clear any error state
       setShowResults(true);
     } else if (historyItem.error) {
       // Show stored error
+      setCurrentSearchError(historyItem.error);
       setErrorMessage(historyItem.error);
       setShowErrorPopup(true);
     } else {
@@ -447,7 +455,7 @@ function App() {
         onClose={handleCloseResults}
         searchQuery={searchQuery}
         searchResults={apiSearchResults}
-        apiError={apiError}
+        apiError={currentSearchError}
         onPushToCrm={handlePushToCrm}
         onToggleTracking={handleToggleTracking}
         getTrackingStatus={getTrackingStatus}
