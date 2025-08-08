@@ -524,65 +524,32 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                         </div>
                       )}
 
-                      {/* Referral Section with Feedback Buttons */}
-                      <div className="mt-4 mb-4">
-                        <div className="h-px bg-white/10 mb-4"></div>
-                        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-4 relative" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}>
-                          {/* Close button */}
-                          <button
-                            onClick={onClose}
-                            className="absolute top-3 right-3 text-white/50 hover:text-white/80 transition-colors duration-200 p-1"
-                          >
-                            <X size={16} />
-                          </button>
-
-                          <div className="flex items-start space-x-3 mb-4">
-                            <Gift size={20} className="text-pink-400 mt-0.5 flex-shrink-0" />
-                            <div className="flex-1 pr-6">
-                              <h4 className="text-white/90 font-medium text-sm mb-2" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                                Love Knowledge?
-                              </h4>
-                              <p className="text-white/70 text-xs mb-3 leading-relaxed" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                                Share it with a friend — when they sign up, you both get free bonus credits.
-                              </p>
-                              <button
-                                className="inline-flex items-center space-x-2 px-4 py-2 rounded-full font-medium text-xs transition-all duration-200 border-2 text-pink-400 border-pink-400 hover:bg-pink-400 hover:text-white"
-                                style={{ fontFamily: 'Poppins, sans-serif' }}
-                              >
-                                <Gift size={14} />
-                                <span>Invite a Friend</span>
-                              </button>
-                            </div>
-                          </div>
-
-                          {/* Feedback Buttons */}
-                          <div className="flex items-center justify-end space-x-4">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleFeedback(candidate.email || candidate.name, 'positive');
-                              }}
-                              className="flex items-center space-x-2 bg-white/10 hover:bg-green-500/20 border border-white/20 hover:border-green-500/30 rounded-full px-3 py-2 transition-all duration-200 group"
-                            >
-                              <ThumbsUp size={14} className="text-white/70 group-hover:text-green-400" />
-                              <span className="text-white/70 group-hover:text-green-400 text-xs font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                                Good match
-                              </span>
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleFeedback(candidate.email || candidate.name, 'negative');
-                              }}
-                              className="flex items-center space-x-2 bg-white/10 hover:bg-red-500/20 border border-white/20 hover:border-red-500/30 rounded-full px-3 py-2 transition-all duration-200 group"
-                            >
-                              <ThumbsDown size={14} className="text-white/70 group-hover:text-red-400" />
-                              <span className="text-white/70 group-hover:text-red-400 text-xs font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                                Poor match
-                              </span>
-                            </button>
-                          </div>
-                        </div>
+                      {/* Feedback Buttons */}
+                      <div className="flex items-center justify-end space-x-4">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleFeedback(candidate.email || candidate.name, 'positive');
+                          }}
+                          className="flex items-center space-x-2 bg-white/10 hover:bg-green-500/20 border border-white/20 hover:border-green-500/30 rounded-full px-3 py-2 transition-all duration-200 group"
+                        >
+                          <ThumbsUp size={14} className="text-white/70 group-hover:text-green-400" />
+                          <span className="text-white/70 group-hover:text-green-400 text-xs font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                            Good match
+                          </span>
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleFeedback(candidate.email || candidate.name, 'negative');
+                          }}
+                          className="flex items-center space-x-2 bg-white/10 hover:bg-red-500/20 border border-white/20 hover:border-red-500/30 rounded-full px-3 py-2 transition-all duration-200 group"
+                        >
+                          <ThumbsDown size={14} className="text-white/70 group-hover:text-red-400" />
+                          <span className="text-white/70 group-hover:text-red-400 text-xs font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                            Poor match
+                          </span>
+                        </button>
                       </div>
                     </div>
                   </div>
