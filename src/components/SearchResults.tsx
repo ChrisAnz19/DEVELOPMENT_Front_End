@@ -63,6 +63,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       setExpandedCards(new Set());
       setShowPhoneNumbers(new Set());
       setExpandedBehavioralSections(new Set());
+      setShowReferralSection(true); // Always show referral section when modal opens
     }
   }, [isVisible, searchResults]);
 
