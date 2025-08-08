@@ -138,30 +138,7 @@ const SignInPopup: React.FC<SignInPopupProps> = ({ isVisible, onClose, onSwitchT
             </button>
           </form>
 
-          {/* Divider */}
-          <div className="flex items-center mb-6">
-            <div className="flex-1 h-px bg-white/20"></div>
-            <span className="px-3 text-white/50 text-xs" style={{ fontFamily: 'Clash Display, sans-serif' }}>
-              or
-            </span>
-            <div className="flex-1 h-px bg-white/20"></div>
-          </div>
 
-          {/* Sign Up Section */}
-          <div className="text-center">
-            <p className="text-white/70 text-sm mb-3" style={{ fontFamily: 'Clash Display, sans-serif' }}>
-              Don't have an account?
-            </p>
-            <button
-              onClick={onSwitchToSignUp}
-              className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 text-sm"
-              style={{ fontFamily: 'Clash Display, sans-serif' }}
-              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#fb4b76'; e.currentTarget.style.borderColor = '#fb4b76'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.borderColor = ''; }}
-            >
-              Create Account
-            </button>
-          </div>
 
           {/* Forgot Password */}
           <div className="text-center mt-4">

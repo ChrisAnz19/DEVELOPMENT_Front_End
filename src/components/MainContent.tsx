@@ -16,6 +16,8 @@ const MainContent: React.FC<MainContentProps> = ({ onSearch, pendingSearch = '' 
     }
   }, [pendingSearch]);
 
+
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim()) {
@@ -31,6 +33,8 @@ const MainContent: React.FC<MainContentProps> = ({ onSearch, pendingSearch = '' 
     }
     setInput(pillText);
   };
+
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
