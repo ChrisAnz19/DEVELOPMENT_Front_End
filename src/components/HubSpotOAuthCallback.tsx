@@ -46,24 +46,54 @@ const HubSpotOAuthCallback: React.FC = () => {
         setMessage('Exchanging authorization code for access token...');
 
         // Exchange code for access token
-        const tokenResponse = await fetch('/api/hubspot/oauth/token', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            code,
-            redirect_uri: `${window.location.origin}/oauth/hubspot/callback`,
-          }),
-        });
+        let tokenData;
+        try {
+          const tokenResponse = await fetch('/api/hubspot/oauth/token', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              code,
+              redirect_uri: `${window.location.origin}/oauth/hubspot/callback`,
+            }),
+          });
 
-        if (!tokenResponse.ok) {
-          const errorData = await tokenResponse.json();
-          throw new Error(errorData.error || 'Failed to exchange code for token');
+          if (!tokenResponse) {
+            throw new Error('No response received from server');
+          }
+
+          if (!tokenResponse.ok) {
+            const errorText = await tokenResponse.text();
+            throw new Error(`HTTP ${tokenResponse.status}: ${errorText}`);
+          }
+
+          const text = await tokenResponse.text();
+          if (!text.trim()) {
+            throw new Error('Empty response from server');
+          }
+          tokenData = JSON.parse(text);
+        } catch (err) {
+          console.error('❌ OAuth callback error:', err);
+          setStatus('error');
+          setMessage(err instanceof Error ? err.message : 'OAuth authentication failed');
+
+          // Send error message to parent window
+          if (window.opener) {
+            window.opener.postMessage({
+              type: 'HUBSPOT_OAUTH_ERROR',
+              error: err instanceof Error ? err.message : 'OAuth authentication failed'
+            }, window.location.origin);
+          }
+
+          // Close popup after a delay
+          setTimeout(() => {
+            window.close();
+          }, 3000);
+          return;
         }
 
-        const tokenData = await tokenResponse.json();
-        
+        // Success
         console.log('✅ Token exchange successful:', tokenData);
         setStatus('success');
         setMessage('Successfully connected to HubSpot!');
