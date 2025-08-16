@@ -38,10 +38,7 @@ const MainContent: React.FC<MainContentProps> = ({ onSearch, pendingSearch = '' 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      if (input.trim()) {
-        onSearch(input.trim());
-        setInput('');
-      }
+      handleSubmit(e as any); // Use the same submit logic
     }
   };
 
