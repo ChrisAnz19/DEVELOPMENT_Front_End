@@ -71,6 +71,12 @@ function App() {
   }, [user?.id]);
 
   const handleSearch = (query: string) => {
+    // Check for easter egg first
+    if (query.toLowerCase().trim() === 'find my perfect wife') {
+      // Don't process this as a regular search - easter egg should handle it
+      return;
+    }
+
     if (!user) {
       setPendingSearch(query); // Store the search query
       setShowSignInPopup(true);
