@@ -37,7 +37,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const loadUser = async () => {
       setLoading(true);
       try {
-        const currentUser = await getCurrentUser();
+        // Temporarily disable API call to test if this is causing the blank screen
+        // const currentUser = await getCurrentUser();
+        const currentUser = null; // Temporary fix
         setUser(currentUser);
         if (currentUser) {
           setUserProfile(currentUser);

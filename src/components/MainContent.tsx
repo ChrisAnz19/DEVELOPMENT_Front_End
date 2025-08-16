@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Paperclip, ArrowUp } from 'lucide-react';
+import { Paperclip, ArrowUp, Heart } from 'lucide-react';
+import SlotCounter from 'react-slot-counter';
+import { useDemoSearches } from '../hooks/useDemoSearches';
 
 interface MainContentProps {
   onSearch: (query: string) => void;
@@ -8,6 +10,8 @@ interface MainContentProps {
 
 const MainContent: React.FC<MainContentProps> = ({ onSearch, pendingSearch = '' }) => {
   const [input, setInput] = useState(pendingSearch);
+  const [showEasterEgg, setShowEasterEgg] = useState(false);
+  const { currentSearch, isLoading } = useDemoSearches();
 
   // Update input when pendingSearch changes
   React.useEffect(() => {
@@ -21,19 +25,22 @@ const MainContent: React.FC<MainContentProps> = ({ onSearch, pendingSearch = '' 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim()) {
+      // Check for easter egg
+      if (input.trim().toLowerCase() === 'find my perfect wife') {
+        setShowEasterEgg(true);
+        setInput('');
+        return;
+      }
       onSearch(input.trim());
       setInput('');
     }
   };
 
-  const handlePillClick = (pillText: string) => {
-    if (pillText === 'More') {
-      // Do nothing for "More" button
-      return;
+  const handleDemoSearchClick = () => {
+    if (currentSearch && !isLoading) {
+      setInput(currentSearch);
     }
-    setInput(pillText);
   };
-
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -45,18 +52,6 @@ const MainContent: React.FC<MainContentProps> = ({ onSearch, pendingSearch = '' 
     }
   };
 
-  const pills = [
-    'Manufacturing CIOs Researching Cloud ERP',
-    'Series-B Engineers Open to New Roles',
-    'Finance Leaders Looking for HIPAA Audit Tools',
-    'Executives Looking to Invest in Early Stage Funds',
-    'More'
-  ];
-
-  // Split pills into rows: 2 on top, 3 on bottom
-  const topRowPills = pills.slice(0, 2);
-  const bottomRowPills = pills.slice(2);
-
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-16">
       {/* Headers */}
@@ -66,46 +61,72 @@ const MainContent: React.FC<MainContentProps> = ({ onSearch, pendingSearch = '' 
         </h2>
       </div>
 
-      {/* Pills */}
+      {/* Demo Search Display */}
       <div className="mb-6 sm:mb-8 w-full">
-        <div className="flex flex-col items-center gap-y-2 sm:gap-y-3 max-w-4xl mx-auto px-2">
-          {/* Top row - 2 pills */}
-          <div className="flex justify-center gap-x-1 sm:gap-x-2 flex-wrap">
-            {topRowPills.map((pill, index) => (
-              <button
-                key={index}
-                onClick={() => handlePillClick(pill)}
-                className="group relative overflow-hidden bg-transparent rounded-full px-2 sm:px-3 py-1 sm:py-1.5 text-white hover:border-transparent transition-all duration-300 h-7 sm:h-8 flex items-center text-center mb-1 sm:mb-0"
-                style={{ fontFamily: 'Poppins, sans-serif', border: '1px solid #fb4b76' }}
-              >
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ backgroundColor: '#fb4b76' }}></div>
-                <span className="relative z-10 font-medium text-[9px] sm:text-[11px] leading-tight">
-                  {pill}
-                </span>
-              </button>
-            ))}
-          </div>
-
-          {/* Bottom row - 3 pills */}
-          <div className="flex justify-center gap-x-1 sm:gap-x-2 flex-wrap">
-            {bottomRowPills.map((pill, index) => (
-              <button
-                key={index + topRowPills.length}
-                onClick={() => handlePillClick(pill)}
-                className="group relative overflow-hidden bg-transparent rounded-full px-2 sm:px-3 py-1 sm:py-1.5 text-white hover:border-transparent transition-all duration-300 h-7 sm:h-8 flex items-center text-center mb-1 sm:mb-0"
-                style={{ fontFamily: 'Poppins, sans-serif', border: '1px solid #fb4b76' }}
-              >
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ backgroundColor: '#fb4b76' }}></div>
-                <span className="relative z-10 font-medium text-[9px] sm:text-[11px] leading-tight">
-                  {pill}
-                </span>
-              </button>
-            ))}
+        <div className="w-full max-w-sm sm:max-w-xl md:max-w-3xl px-2 mx-auto">
+          <div className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-2xl px-4 sm:px-6 py-2 sm:py-3 shadow-lg w-full min-h-[80px] flex flex-col justify-center">
+            <div className="text-center">
+              <p className="text-white/60 text-[9px] sm:text-[10px] font-normal mb-2" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                Searches from our community
+              </p>
+              <div className="flex items-center justify-center min-h-[3rem] px-2 overflow-hidden">
+                {isLoading ? (
+                  <div className="animate-pulse text-white/50 text-base" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                    Loading...
+                  </div>
+                ) : currentSearch ? (
+                  <div className="relative w-full h-10 overflow-hidden">
+                    <style jsx>{`
+                      @keyframes rollInPauseOut {
+                        0% { 
+                          transform: translateY(100%);
+                        }
+                        15% {
+                          transform: translateY(0);
+                        }
+                        90% {
+                          transform: translateY(0);
+                        }
+                        100% { 
+                          transform: translateY(-100%);
+                        }
+                      }
+                      .vertical-slider {
+                        animation: rollInPauseOut 4.8s ease-in-out forwards;
+                        width: 100%;
+                        height: 100%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        text-align: center;
+                      }
+                    `}</style>
+                    <div 
+                      className="vertical-slider text-sm sm:text-base font-medium text-white px-2"
+                      style={{ 
+                        fontFamily: 'Poppins, sans-serif',
+                        lineHeight: '1.3',
+                        letterSpacing: '0.3px',
+                        wordBreak: 'break-word',
+                        hyphens: 'auto'
+                      }}
+                      key={currentSearch}
+                    >
+                      {currentSearch}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-white/50 text-base" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                    No search available
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
       {/* Large Centered Input */}
-      <div className="w-full max-w-xs sm:max-w-lg md:max-w-2xl px-2">
+      <div className="w-full max-w-sm sm:max-w-xl md:max-w-3xl px-2">
         <form onSubmit={handleSubmit} className="relative">
           <div className="backdrop-blur-sm rounded-3xl shadow-2xl" style={{ backgroundColor: '#1B2A5C', border: '1px solid #fb4b76' }}>
             {/* Large Input Field */}
@@ -146,6 +167,42 @@ const MainContent: React.FC<MainContentProps> = ({ onSearch, pendingSearch = '' 
           </div>
         </form>
       </div>
+      
+      {/* Easter Egg Popup */}
+      {showEasterEgg && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 max-w-md mx-4 text-center shadow-2xl">
+            <div className="flex justify-center mb-4">
+              <Heart 
+                size={48} 
+                className="text-red-400 fill-red-400 animate-pulse" 
+              />
+            </div>
+            <h3 className="text-white text-xl font-semibold mb-2" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+              You already found her
+            </h3>
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <span className="text-white/90 text-lg font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                CA
+              </span>
+              <Heart size={16} className="text-red-400 fill-red-400" />
+              <span className="text-white/90 text-lg font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                RP
+              </span>
+            </div>
+            <p className="text-white/70 text-sm mb-6" style={{ fontFamily: 'Poppins, sans-serif' }}>
+              July 30, 2025
+            </p>
+            <button
+              onClick={() => setShowEasterEgg(false)}
+              className="bg-red-400 hover:bg-red-500 text-white px-6 py-2 rounded-full transition-colors duration-200 font-medium"
+              style={{ fontFamily: 'Poppins, sans-serif' }}
+            >
+              ❤️ Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
