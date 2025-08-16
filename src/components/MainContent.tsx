@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Paperclip, ArrowUp, Heart } from 'lucide-react';
+import { Paperclip, ArrowUp } from 'lucide-react';
 import SlotCounter from 'react-slot-counter';
 import { useDemoSearches } from '../hooks/useDemoSearches';
 
@@ -10,7 +10,6 @@ interface MainContentProps {
 
 const MainContent: React.FC<MainContentProps> = ({ onSearch, pendingSearch = '' }) => {
   const [input, setInput] = useState(pendingSearch);
-  const [showEasterEgg, setShowEasterEgg] = useState(false);
   const { currentSearch, isLoading } = useDemoSearches();
 
   // Update input when pendingSearch changes
@@ -25,12 +24,6 @@ const MainContent: React.FC<MainContentProps> = ({ onSearch, pendingSearch = '' 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim()) {
-      // Check for easter egg
-      if (input.trim().toLowerCase() === 'find my perfect wife') {
-        setShowEasterEgg(true);
-        setInput('');
-        return;
-      }
       onSearch(input.trim());
       setInput('');
     }
@@ -167,42 +160,7 @@ const MainContent: React.FC<MainContentProps> = ({ onSearch, pendingSearch = '' 
           </div>
         </form>
       </div>
-      
-      {/* Easter Egg Popup */}
-      {showEasterEgg && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 max-w-md mx-4 text-center shadow-2xl">
-            <div className="flex justify-center mb-4">
-              <Heart 
-                size={48} 
-                className="text-red-400 fill-red-400 animate-pulse" 
-              />
-            </div>
-            <h3 className="text-white text-xl font-semibold mb-2" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-              You already found her
-            </h3>
-            <div className="flex items-center justify-center space-x-2 mb-4">
-              <span className="text-white/90 text-lg font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                CA
-              </span>
-              <Heart size={16} className="text-red-400 fill-red-400" />
-              <span className="text-white/90 text-lg font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                RP
-              </span>
-            </div>
-            <p className="text-white/70 text-sm mb-6" style={{ fontFamily: 'Poppins, sans-serif' }}>
-              July 30, 2025
-            </p>
-            <button
-              onClick={() => setShowEasterEgg(false)}
-              className="bg-red-400 hover:bg-red-500 text-white px-6 py-2 rounded-full transition-colors duration-200 font-medium"
-              style={{ fontFamily: 'Poppins, sans-serif' }}
-            >
-              ❤️ Close
-            </button>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { History } from 'lucide-react';
+import { History, Heart } from 'lucide-react';
 import { useKnowledgeGPT, SearchResponse, Candidate } from './hooks/useKnowledgeGPT';
 import { useAuth } from './hooks/useAuth';
 import { useSearchApi } from './hooks/useSearchApi'; // New import for useSearchApi
@@ -34,6 +34,7 @@ function App() {
   const [showSignInPopup, setShowSignInPopup] = useState(false);
   const [showSignUpPopup, setShowSignUpPopup] = useState(false);
   const [showTrackingModal, setShowTrackingModal] = useState(false);
+  const [showEasterEgg, setShowEasterEgg] = useState(false);
   const [apiSearchResults, setApiSearchResults] = useState<SearchResponse | null>(null);
   const [currentSearchError, setCurrentSearchError] = useState<string | null>(null);
   const [showErrorPopup, setShowErrorPopup] = useState(false);
@@ -73,7 +74,7 @@ function App() {
   const handleSearch = (query: string) => {
     // Check for easter egg first
     if (query.toLowerCase().trim() === 'find my perfect wife') {
-      // Don't process this as a regular search - easter egg should handle it
+      setShowEasterEgg(true);
       return;
     }
 
@@ -524,6 +525,42 @@ function App() {
         onClose={handleCloseErrorPopup}
         errorMessage={errorMessage}
       />
+      
+      {/* Easter Egg Popup */}
+      {showEasterEgg && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 max-w-md mx-4 text-center shadow-2xl">
+            <div className="flex justify-center mb-4">
+              <Heart 
+                size={48} 
+                className="text-red-400 fill-red-400 animate-pulse" 
+              />
+            </div>
+            <h3 className="text-white text-xl font-semibold mb-2" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+              You already found her
+            </h3>
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <span className="text-white/90 text-lg font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                CA
+              </span>
+              <Heart size={16} className="text-red-400 fill-red-400" />
+              <span className="text-white/90 text-lg font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                RP
+              </span>
+            </div>
+            <p className="text-white/70 text-sm mb-6" style={{ fontFamily: 'Poppins, sans-serif' }}>
+              July 30, 2025
+            </p>
+            <button
+              onClick={() => setShowEasterEgg(false)}
+              className="bg-red-400 hover:bg-red-500 text-white px-6 py-2 rounded-full transition-colors duration-200 font-medium"
+              style={{ fontFamily: 'Poppins, sans-serif' }}
+            >
+              ❤️ Close
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
