@@ -23,10 +23,25 @@ const HubSpotOAuthCallback: React.FC = () => {
         }
 
         // Verify state parameter
-        const storedState = sessionStorage.getItem('hubspot_oauth_state');
+        const storedState = localStorage.getItem('hubspot_oauth_state');
         if (!storedState || state !== storedState) {
-          throw new Error('Invalid state parameter - possible CSRF attack');
+          console.error('Invalid state parameter - possible CSRF attack');
+          setStatus('error');
+          setMessage('Could not complete the connection.\n\nThis window must be opened by clicking "Connect HubSpot" in the Integrations modal.\n\nPlease close this window and try again from the app.');
+          // Send error to parent window
+          if (window.opener) {
+            window.opener.postMessage({
+              type: 'HUBSPOT_OAUTH_ERROR',
+              error: 'Invalid state parameter - possible CSRF attack'
+            }, window.location.origin);
+          }
+          // Close popup after a delay
+          setTimeout(() => {
+            window.close();
+          }, 4000);
+          return;
         }
+        localStorage.removeItem('hubspot_oauth_state');
 
         setMessage('Exchanging authorization code for access token...');
 
@@ -85,7 +100,7 @@ const HubSpotOAuthCallback: React.FC = () => {
         }, 3000);
       } finally {
         // Clean up stored state
-        sessionStorage.removeItem('hubspot_oauth_state');
+        localStorage.removeItem('hubspot_oauth_state');
       }
     };
 

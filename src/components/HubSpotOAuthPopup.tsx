@@ -35,7 +35,7 @@ const HubSpotOAuthPopup: React.FC<HubSpotOAuthPopupProps> = ({
     try {
       // Generate state for security
       const state = Math.random().toString(36).substring(7);
-      sessionStorage.setItem('hubspot_oauth_state', state);
+      localStorage.setItem('hubspot_oauth_state', state);
 
       // Build HubSpot OAuth URL
       const authUrl = new URL('https://app.hubspot.com/oauth/authorize');
