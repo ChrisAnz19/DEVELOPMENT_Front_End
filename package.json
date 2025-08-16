@@ -8,15 +8,21 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview --host 0.0.0.0 --port ${PORT:-4173}",
-    "start": "vite preview --host 0.0.0.0 --port $PORT"
+    "start": "vite preview --host 0.0.0.0 --port $PORT",
+    "server": "node server.js"
   },
   "dependencies": {
+    "@integry/sdk": "^4.7.69",
     "@supabase/supabase-js": "^2.51.0",
     "@types/dompurify": "^3.0.5",
+    "@types/react-router-dom": "^5.3.3",
+    "cors": "^2.8.5",
     "dompurify": "^3.2.6",
+    "express": "^5.1.0",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-router-dom": "^7.8.1",
     "react-slot-counter": "^3.3.1"
   },
   "devDependencies": {

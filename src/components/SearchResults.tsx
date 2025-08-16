@@ -1,7 +1,9 @@
 import React from 'react';
 import { useState } from 'react';
-import { X, Target, Mail, Linkedin, ThumbsUp, ThumbsDown, ChevronDown, ChevronUp, Eye, EyeOff, Phone, TrendingUp, Shield, Heart, ChevronRight, Brain, Gift } from 'lucide-react';
+import { X, Target, Mail, Linkedin, ThumbsUp, ThumbsDown, ChevronDown, ChevronUp, Eye, EyeOff, Phone, TrendingUp, Shield, Heart, ChevronRight, Brain, Gift, Loader2 } from 'lucide-react';
 import { SearchResponse, Candidate } from '../hooks/useKnowledgeGPT';
+import { usePrismatic } from '../hooks/usePrismatic';
+import { useAuth } from '../context/AuthContext';
 import DOMPurify from 'dompurify';
 
 interface SearchResultsProps {
@@ -25,6 +27,13 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   onToggleTracking,
   getTrackingStatus
 }) => {
+  const { currentUser } = useAuth();
+  const { 
+    hubspot, 
+    pushContactsToHubSpot, 
+    isPushingToHubSpot, 
+    hubspotPushResult 
+  } = usePrismatic();
 
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [showPhoneNumbers, setShowPhoneNumbers] = useState<Set<string>>(new Set());
@@ -83,6 +92,32 @@ const SearchResults: React.FC<SearchResultsProps> = ({
     // TODO: Implement secure feedback handling with proper API call
     // Removed console.log for security - sensitive data should not be logged to console
     // Consider implementing proper analytics/logging service for production
+  };
+
+  const handlePushToHubSpot = async () => {
+    if (!candidates.length) {
+      return;
+    }
+
+    try {
+      // Convert candidates to the format expected by Prismatic
+      const candidatesData = candidates.map(candidate => ({
+        name: candidate.name,
+        title: candidate.title,
+        company: candidate.company,
+        email: candidate.email || '',
+        accuracy: candidate.accuracy,
+        reasons: candidate.reasons || [],
+        linkedin_url: candidate.linkedin_url,
+        profile_photo_url: candidate.profile_photo_url,
+        location: candidate.location,
+        behavioral_data: candidate.behavioral_data
+      }));
+
+      await pushContactsToHubSpot(candidatesData);
+    } catch (error) {
+      console.error('Failed to push contacts to HubSpot:', error);
+    }
   };
 
   const handleToggleTrackingLocal = (candidate: Candidate) => {
@@ -563,15 +598,37 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
         {/* Footer */}
         {candidates.length > 0 && (
-          <div className="p-4 sm:p-6 border-t border-white/10">
+          <div className="p-4 sm:p-6 border-t border-white/10 space-y-4">
+            {/* HubSpot Push Result */}
+            {hubspotPushResult && (
+              <div className={`p-3 rounded-lg text-sm ${
+                hubspotPushResult.includes('Successfully') || hubspotPushResult.includes('Pushed')
+                  ? 'bg-green-500/10 border border-green-500/20 text-green-400'
+                  : 'bg-red-500/10 border border-red-500/20 text-red-400'
+              }`}>
+                {hubspotPushResult}
+              </div>
+            )}
+
+            {/* Push to HubSpot Button */}
             <button
-              onClick={onPushToCrm}
-              className="group relative overflow-hidden w-full text-white font-medium py-2.5 sm:py-3 px-4 rounded-xl border border-white/20 transition-all duration-200 text-sm sm:text-base"
+              onClick={handlePushToHubSpot}
+              disabled={isPushingToHubSpot}
+              className="group relative overflow-hidden w-full text-white font-medium py-2.5 sm:py-3 px-4 rounded-xl border border-white/20 hover:border-pink-500/50 transition-all duration-200 text-sm sm:text-base flex items-center justify-center space-x-2"
               style={{ fontFamily: 'Poppins, sans-serif' }}
             >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ backgroundColor: '#fb4b76' }}></div>
-              <span className="relative z-10">Push to CRM</span>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-pink-500"></div>
+              {isPushingToHubSpot ? (
+                <>
+                  <Loader2 size={16} className="animate-spin relative z-10" />
+                  <span className="relative z-10">Pushing to HubSpot...</span>
+                </>
+              ) : (
+                <span className="relative z-10">Push to HubSpot</span>
+              )}
             </button>
+
+
           </div>
         )}
       </div>
