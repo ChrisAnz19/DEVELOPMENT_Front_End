@@ -23,6 +23,7 @@ import SignInPopup from './components/SignInPopup';
 import SignUpPopup from './components/SignUpPopup';
 import TrackingModal from './components/TrackingModal';
 import ErrorPopup from './components/ErrorPopup';
+import IntegrationsModal from './components/IntegrationsModal';
 
 function App() {
   const [isLoading, setIsLoading] = useState(false);
@@ -34,6 +35,7 @@ function App() {
   const [showSignInPopup, setShowSignInPopup] = useState(false);
   const [showSignUpPopup, setShowSignUpPopup] = useState(false);
   const [showTrackingModal, setShowTrackingModal] = useState(false);
+  const [showIntegrationsModal, setShowIntegrationsModal] = useState(false);
   const [showEasterEgg, setShowEasterEgg] = useState(false);
   const [apiSearchResults, setApiSearchResults] = useState<SearchResponse | null>(null);
   const [currentSearchError, setCurrentSearchError] = useState<string | null>(null);
@@ -281,6 +283,14 @@ function App() {
     setShowTrackingModal(false);
   };
 
+  const handleToggleIntegrationsModal = () => {
+    setShowIntegrationsModal(!showIntegrationsModal);
+  };
+
+  const handleCloseIntegrationsModal = () => {
+    setShowIntegrationsModal(false);
+  };
+
   const handleCloseErrorPopup = () => {
     setShowErrorPopup(false);
     setErrorMessage('');
@@ -386,6 +396,7 @@ function App() {
         
         <Header 
           onLoginClick={() => setShowSignInPopup(true)}
+          onIntegrationsClick={handleToggleIntegrationsModal}
         />
         <MainContent onSearch={handleSearch} pendingSearch={pendingSearch} />
         
@@ -519,6 +530,10 @@ function App() {
           }
         }}
         onPushToCrm={handlePushToCrm}
+      />
+      <IntegrationsModal 
+        isVisible={showIntegrationsModal}
+        onClose={handleCloseIntegrationsModal}
       />
       <ErrorPopup 
         isVisible={showErrorPopup}

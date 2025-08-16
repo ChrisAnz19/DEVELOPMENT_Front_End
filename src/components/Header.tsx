@@ -1,15 +1,16 @@
 import React from 'react';
 import { useState } from 'react';
-import { User, History, LogOut } from 'lucide-react';
+import { User, History, LogOut, Settings } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 interface HeaderProps {
   onToggleHistory?: () => void;
   showHistoryButton?: boolean;
   onLoginClick?: () => void;
+  onIntegrationsClick?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onToggleHistory, showHistoryButton = false, onLoginClick }) => {
+const Header: React.FC<HeaderProps> = ({ onToggleHistory, showHistoryButton = false, onLoginClick, onIntegrationsClick }) => {
   const { user, userProfile, signOut } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -83,8 +84,18 @@ const Header: React.FC<HeaderProps> = ({ onToggleHistory, showHistoryButton = fa
                     </p>
                   </div>
                   <button 
-                    onClick={handleSignOut}
+                    onClick={() => {
+                      onIntegrationsClick?.();
+                      setShowDropdown(false);
+                    }}
                     className="w-full flex items-center space-x-2 px-3 py-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200 mt-1"
+                  >
+                    <Settings size={14} />
+                    <span className="text-sm font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>Integrations</span>
+                  </button>
+                  <button 
+                    onClick={handleSignOut}
+                    className="w-full flex items-center space-x-2 px-3 py-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200"
                   >
                     <LogOut size={14} />
                     <span className="text-sm font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>Sign Out</span>
