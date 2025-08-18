@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, User, Mail, Lock } from 'lucide-react';
+import { X, User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 
@@ -17,6 +17,7 @@ const SignInPopup: React.FC<SignInPopupProps> = ({ isVisible, onClose, onSwitchT
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   
   const { signIn } = useAuth();
 
@@ -99,7 +100,7 @@ const SignInPopup: React.FC<SignInPopupProps> = ({ isVisible, onClose, onSwitchT
           {/* Sign In Form */}
           <form onSubmit={handleSignIn} className="space-y-4 mb-6">
             <div className="relative">
-              <Mail size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50" />
+              <Mail size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#fb4b76]" />
               <input
                 type="email"
                 name="email"
@@ -113,17 +114,26 @@ const SignInPopup: React.FC<SignInPopupProps> = ({ isVisible, onClose, onSwitchT
             </div>
             
             <div className="relative">
-              <Lock size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50" />
+              <Lock size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#fb4b76]" />
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
                 placeholder="Password"
-                className="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-4 py-3 text-white placeholder-white/50 text-sm focus:outline-none focus:border-pink-500 transition-all duration-200"
+                className="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-10 py-3 text-white placeholder-white/50 text-sm focus:outline-none focus:border-pink-500 transition-all duration-200"
                 style={{ fontFamily: 'Clash Display, sans-serif' }}
                 required
               />
+              <button
+                type="button"
+                tabIndex={-1}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#fb4b76] hover:text-pink-400 focus:outline-none"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
 
             <button
