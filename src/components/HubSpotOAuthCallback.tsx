@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { getApiUrl } from '../config/api';
 
 const HubSpotOAuthCallback: React.FC = () => {
   const [status, setStatus] = useState<'processing' | 'success' | 'error'>('processing');
@@ -48,7 +49,7 @@ const HubSpotOAuthCallback: React.FC = () => {
         // Exchange code for access token
         let tokenData;
         try {
-          const tokenResponse = await fetch('/api/hubspot/oauth/token', {
+          const tokenResponse = await fetch(getApiUrl('/api/hubspot/oauth/token'), {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

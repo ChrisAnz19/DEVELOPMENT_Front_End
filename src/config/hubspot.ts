@@ -40,7 +40,7 @@ export const HUBSPOT_SETUP_INSTRUCTIONS = `
    - Create new public app: "Knowledge GPT Integration"
    
 2. Configure OAuth:
-   - Redirect URL: ${typeof window !== 'undefined' ? window.location.origin + '/oauth/hubspot/callback' : 'http://localhost:5175/oauth/hubspot/callback'}
+   - Redirect URL: ${typeof window !== 'undefined' ? window.location.origin + '/oauth/hubspot/callback' : 'http://localhost:5173/oauth/hubspot/callback'}
    - Scopes: ${HUBSPOT_CONFIG.SCOPES}
    
 3. Get Credentials:

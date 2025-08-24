@@ -12,7 +12,9 @@ interface DemoSearchResponse {
   message: string;
 }
 
-const API_BASE_URL = 'https://knowledge-gpt-siuq.onrender.com';
+import { API_CONFIG } from '../config/api';
+
+const API_BASE_URL = API_CONFIG.KNOWLEDGE_GPT_URL;
 
 export const useDemoSearches = () => {
   const [currentSearch, setCurrentSearch] = useState<string>('');

@@ -1,5 +1,7 @@
 // src/lib/userApi.ts
-const API_BASE_URL = 'https://user-database-api.onrender.com';
+import { API_CONFIG } from '../config/api';
+
+const API_BASE_URL = API_CONFIG.USER_API_URL;
 
 interface UserData {
   email: string;

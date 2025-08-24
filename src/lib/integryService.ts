@@ -1,4 +1,5 @@
 import { IntegryJS } from '@integry/sdk';
+import { getApiUrl } from '../config/api';
 
 interface IntegryConfig {
   appKey: string;
@@ -21,7 +22,7 @@ class IntegryService {
     try {
       console.log('📡 Generating hash from server...');
       // Generate hash from server
-      const response = await fetch('http://localhost:3001/api/integry/hash', {
+      const response = await fetch(getApiUrl('/api/integry/hash'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

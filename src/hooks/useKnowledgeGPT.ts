@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { API_CONFIG } from '../config/api';
 
 // TypeScript interfaces based on API documentation
 export interface SearchRequest {
@@ -80,7 +81,7 @@ export const useKnowledgeGPT = (): UseKnowledgeGPT => {
   const [error, setError] = useState<string | null>(null);
   
   // Use the live API
-  const API_BASE = 'https://knowledge-gpt-siuq.onrender.com';
+  const API_BASE = API_CONFIG.KNOWLEDGE_GPT_URL;
 
   const createSearch = async (prompt: string, maxCandidates: number = 2): Promise<string> => {
     setIsLoading(true);
