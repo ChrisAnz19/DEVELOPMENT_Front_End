@@ -1,10 +1,202 @@
 import React from 'react';
 import { useState } from 'react';
-import { X, Target, Mail, Linkedin, ThumbsUp, ThumbsDown, ChevronDown, ChevronUp, Eye, EyeOff, Phone, TrendingUp, Shield, Heart, ChevronRight, Brain, Gift, Loader2 } from 'lucide-react';
-import { SearchResponse, Candidate } from '../hooks/useKnowledgeGPT';
+import { X, Target, Mail, Linkedin, ThumbsUp, ThumbsDown, ChevronDown, ChevronUp, Eye, EyeOff, Phone, TrendingUp, Shield, Heart, ChevronRight, Brain, Gift, Loader2, FileText, ExternalLink } from 'lucide-react';
+import { SearchResponse, Candidate, BehavioralData, EvidenceUrl } from '../hooks/useKnowledgeGPT';
 import { usePrismatic } from '../hooks/usePrismatic';
 import { useAuth } from '../context/AuthContext';
 import DOMPurify from 'dompurify';
+import AvatarComponent from './AvatarComponent';
+
+// Evidence type configuration mapping
+const evidenceTypeConfig: Record<string, { icon: string; label: string }> = {
+  "pricing_page": { icon: "💰", label: "Pricing" },
+  "product_page": { icon: "📦", label: "Product Info" },
+  "official_company_page": { icon: "🏢", label: "Company Page" },
+  "documentation": { icon: "📚", label: "Documentation" },
+  "comparison_site": { icon: "📊", label: "Comparison" },
+  "news_article": { icon: "📰", label: "News" },
+  "industry_report": { icon: "📈", label: "Research" },
+  "review_site": { icon: "⭐", label: "Reviews" },
+  "case_study": { icon: "📋", label: "Case Study" },
+  "blog_post": { icon: "✍️", label: "Blog" },
+  "general_information": { icon: "ℹ️", label: "Information" }
+};
+
+// Evidence helper functions
+const getEvidenceIcon = (evidenceType: string) => {
+  return evidenceTypeConfig[evidenceType]?.icon || "🔗";
+};
+
+const getEvidenceLabel = (evidenceType: string) => {
+  return evidenceTypeConfig[evidenceType]?.label || "Information";
+};
+
+// Evidence Section Component
+const EvidenceSection: React.FC<{ candidate: Candidate }> = ({ candidate }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  // Show loading state if evidence is being processed
+  if (candidate.evidence_processing_time !== undefined && candidate.evidence_processing_time < 0) {
+    return (
+      <div className="mb-6">
+        <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+          <div className="flex items-center space-x-2">
+            <Loader2 size={14} className="text-blue-400 animate-spin" />
+            <h5 className="text-blue-400 font-medium text-xs" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+              🔍 Finding supporting evidence...
+            </h5>
+          </div>
+          <p className="text-blue-400/60 text-xs mt-2" style={{ fontFamily: 'Poppins, sans-serif' }}>
+            Analyzing candidate behavior to find concrete evidence URLs
+          </p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Show demo evidence if no real evidence is available (for development/testing)
+  const showDemoEvidence = !candidate.evidence_urls || candidate.evidence_urls.length === 0;
+  const evidenceUrls: EvidenceUrl[] = showDemoEvidence ? [
+    {
+      url: "https://www.salesforce.com/products/platform/pricing/",
+      title: "Salesforce Platform Pricing | Plans & Packages",
+      description: "Official Salesforce pricing page showing current plans and costs",
+      evidence_type: "pricing_page",
+      relevance_score: 0.95,
+      confidence_level: "high" as const,
+      supporting_explanation: "Directly supports claim about researching Salesforce pricing options"
+    },
+    {
+      url: "https://www.g2.com/categories/crm",
+      title: "Best CRM Software 2024 | G2",
+      description: "Comprehensive comparison of CRM solutions including pricing and features",
+      evidence_type: "comparison_site",
+      relevance_score: 0.87,
+      confidence_level: "medium" as const,
+      supporting_explanation: "Shows research into CRM alternatives and competitive analysis"
+    },
+    {
+      url: "https://www.capterra.com/p/salesforce/",
+      title: "Salesforce Reviews & Ratings | Capterra",
+      description: "User reviews and ratings for Salesforce CRM platform",
+      evidence_type: "review_site",
+      relevance_score: 0.82,
+      confidence_level: "medium" as const,
+      supporting_explanation: "Provides user feedback and real-world usage insights"
+    },
+    {
+      url: "https://www.trustradius.com/products/salesforce/reviews",
+      title: "Salesforce Reviews | TrustRadius",
+      description: "Detailed product reviews and comparisons from TrustRadius",
+      evidence_type: "review_site",
+      relevance_score: 0.79,
+      confidence_level: "medium" as const,
+      supporting_explanation: "Additional validation from trusted review platform"
+    },
+    {
+      url: "https://www.softwareadvice.com/crm/salesforce-profile/",
+      title: "Salesforce CRM Software Review | Software Advice",
+      description: "Expert analysis and recommendations for Salesforce CRM",
+      evidence_type: "review_site",
+      relevance_score: 0.76,
+      confidence_level: "medium" as const,
+      supporting_explanation: "Professional software evaluation and insights"
+    }
+  ] : candidate.evidence_urls || [];
+  
+  if (showDemoEvidence && !candidate.evidence_urls) {
+    return (
+      <div className="mb-6">
+        <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center space-x-2">
+              <FileText size={14} className="text-blue-400" />
+              <h5 className="text-blue-400 font-medium text-xs" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                📋 SUPPORTING EVIDENCE
+              </h5>
+              <span className="bg-blue-500/20 text-blue-400 text-[10px] px-2 py-1 rounded-full border border-blue-500/30">
+                DEMO
+              </span>
+              {/* Tooltip */}
+              <div className="relative group">
+                <div className="w-4 h-4 text-blue-400/60 cursor-help">ℹ️</div>
+                <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block z-50">
+                  <div className="bg-gray-900 text-white text-xs rounded-lg p-3 shadow-lg border border-gray-700 w-64">
+                    <div className="font-semibold mb-1">Supporting Evidence (Demo)</div>
+                    <div className="text-gray-300">This shows how evidence URLs will appear when the API provides real data. Evidence URLs provide concrete, verifiable links supporting behavioral insights.</div>
+                    <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="text-blue-400 hover:text-blue-300 transition-colors"
+            >
+              {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </button>
+          </div>
+          
+          {/* Demo Evidence Summary */}
+          <p className="text-blue-400/80 text-xs mb-3" style={{ fontFamily: 'Poppins, sans-serif' }}>
+            Found 5 supporting URLs including pricing, reviews, and comparisons • 87% confidence • Processed in 2.3s
+            <br />
+            <span className="text-blue-400/60">
+              🔗 Connected to: /api/evidence/stats • /api/search • /api/search/{'{request_id}'}
+            </span>
+          </p>
+
+          {/* Demo Evidence URLs */}
+          {isExpanded && (
+            <div className="space-y-3">
+              {evidenceUrls.map((evidence, index) => (
+                <div key={index} className="bg-white/5 border border-blue-500/30 rounded-lg p-3">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-center space-x-2 flex-1 min-w-0">
+                      <span className="text-lg">{getEvidenceIcon(evidence.evidence_type)}</span>
+                      <div className="min-w-0 flex-1">
+                        <h6 className="text-blue-400 font-medium text-xs truncate" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                          {evidence.title}
+                        </h6>
+                        <span className="text-blue-400/60 text-[10px] px-2 py-0.5 rounded border border-blue-500/30 bg-blue-500/10">
+                          {getEvidenceLabel(evidence.evidence_type)}
+                        </span>
+                      </div>
+                    </div>
+
+                  </div>
+                  
+                  <p className="text-blue-400/70 text-xs mb-3 leading-relaxed" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                    {evidence.description}
+                  </p>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-blue-400/50 text-[10px]" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                      Relevance: {Math.round(evidence.relevance_score * 100)}%
+                    </span>
+                    <button
+                      onClick={() => window.open(evidence.url, '_blank', 'noopener,noreferrer')}
+                      className="flex items-center space-x-1 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 hover:border-blue-500/40 text-blue-400 text-xs px-3 py-1.5 rounded transition-all duration-200"
+                    >
+                      <ExternalLink size={12} />
+                      <span>Visit Source</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+  
+  if (!candidate.evidence_urls || candidate.evidence_urls.length === 0) {
+    return null;
+  }
+
+  return null;
+};
 
 interface SearchResultsProps {
   isVisible: boolean;
@@ -27,7 +219,6 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   onToggleTracking,
   getTrackingStatus
 }) => {
-  const { currentUser } = useAuth();
   const { 
     hubspot, 
     pushContactsToHubSpot, 
@@ -35,10 +226,77 @@ const SearchResults: React.FC<SearchResultsProps> = ({
     hubspotPushResult 
   } = usePrismatic();
 
+  // Debug logging to understand component state
+  console.log('🔍 SearchResults component state:', {
+    hasSearchResults: !!searchResults,
+    candidatesCount: searchResults?.candidates?.length || 0,
+    hasEvidenceStats: false, // evidenceStatsLoading and evidenceStatsError are removed
+    evidenceStatsLoading: false,
+    evidenceStatsError: null
+  });
+
+  // Debug logging for evidence data structure
+  if (searchResults?.candidates) {
+    searchResults.candidates.forEach((candidate, index) => {
+      console.log(`🔍 Candidate ${index + 1} evidence data:`, {
+        name: candidate.name,
+        evidence_urls: candidate.evidence_urls,
+        evidence_urls_count: candidate.evidence_urls?.length || 0,
+        evidence_summary: candidate.evidence_summary,
+        evidence_confidence: candidate.evidence_confidence,
+        evidence_processing_time: candidate.evidence_processing_time
+      });
+      
+      // Log the actual evidence_urls array structure
+      if (candidate.evidence_urls && candidate.evidence_urls.length > 0) {
+        console.log(`🔍 Candidate ${index + 1} evidence_urls array:`, candidate.evidence_urls);
+        candidate.evidence_urls.forEach((evidence, evIndex) => {
+          console.log(`  Evidence ${evIndex + 1}:`, {
+            url: evidence.url,
+            title: evidence.title,
+            description: evidence.description,
+            evidence_type: evidence.evidence_type,
+            relevance_score: evidence.relevance_score,
+            confidence_level: evidence.confidence_level
+          });
+        });
+      }
+      
+      // Log the FULL candidate object to see what's actually there
+      console.log(`🔍 Candidate ${index + 1} FULL OBJECT:`, candidate);
+      console.log(`🔍 Candidate ${index + 1} ALL KEYS:`, Object.keys(candidate));
+      
+      // Check for potential field name mismatches
+      const possibleEvidenceFields = [
+        'evidence_urls', 'evidenceUrls', 'evidence_urls_list', 'evidence_list',
+        'validation_urls', 'validationUrls', 'urls', 'links', 'sources',
+        'evidence_data', 'evidenceData', 'supporting_evidence', 'supportingEvidence'
+      ];
+      
+      possibleEvidenceFields.forEach(field => {
+        if ((candidate as any)[field]) {
+          console.log(`🔍 Found potential evidence field '${field}':`, (candidate as any)[field]);
+        }
+      });
+      
+      // Check data types and null/undefined values
+      console.log(`🔍 Candidate ${index + 1} type analysis:`, {
+        evidence_urls_type: typeof candidate.evidence_urls,
+        evidence_urls_is_array: Array.isArray(candidate.evidence_urls),
+        evidence_urls_is_null: candidate.evidence_urls === null,
+        evidence_urls_is_undefined: candidate.evidence_urls === undefined,
+        evidence_urls_length: candidate.evidence_urls?.length,
+        evidence_urls_constructor: candidate.evidence_urls?.constructor?.name
+      });
+    });
+  }
+
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [showPhoneNumbers, setShowPhoneNumbers] = useState<Set<string>>(new Set());
   const [expandedBehavioralSections, setExpandedBehavioralSections] = useState<Set<string>>(new Set());
   const [showReferralSection, setShowReferralSection] = useState<boolean>(true);
+  const [expandedDebugSections, setExpandedDebugSections] = useState<Set<string>>(new Set());
+  const [expandedEvidenceSections, setExpandedEvidenceSections] = useState<Set<string>>(new Set());
 
   // Security utility functions
   const sanitizeText = (text: string): string => {
@@ -47,24 +305,22 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
   const isValidUrl = (url: string): boolean => {
     try {
-      const parsed = new URL(url);
-      return ['http:', 'https:', 'mailto:'].includes(parsed.protocol);
+      new URL(url);
+      return true;
     } catch {
       return false;
     }
   };
 
-  const openSafeLink = (url: string): void => {
-    if (!isValidUrl(url)) {
-      console.warn('Invalid URL blocked:', url);
-      return;
+
+
+  const openUrlSafely = (url: string) => {
+    if (isValidUrl(url)) {
+      window.open(url, '_blank', 'noopener,noreferrer');
     }
-    const link = document.createElement('a');
-    link.href = url;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    link.click();
   };
+
+
 
   // Reset all expanded states when modal opens or search results change
   React.useEffect(() => {
@@ -73,19 +329,23 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       setShowPhoneNumbers(new Set());
       setExpandedBehavioralSections(new Set());
       setShowReferralSection(true); // Always show referral section when modal opens
+      setExpandedDebugSections(new Set()); // Reset debug sections
+      setExpandedEvidenceSections(new Set()); // Reset evidence sections
     }
   }, [isVisible, searchResults]);
 
   if (!isVisible) return null;
 
   const toggleCard = (candidateEmail: string) => {
-    const newExpanded = new Set(expandedCards);
-    if (newExpanded.has(candidateEmail)) {
-      newExpanded.delete(candidateEmail);
-    } else {
-      newExpanded.add(candidateEmail);
-    }
-    setExpandedCards(newExpanded);
+    setExpandedCards(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(candidateEmail)) {
+        newSet.delete(candidateEmail);
+      } else {
+        newSet.add(candidateEmail);
+      }
+      return newSet;
+    });
   };
 
   const handleFeedback = (candidateEmail: string, feedback: 'positive' | 'negative') => {
@@ -126,53 +386,94 @@ const SearchResults: React.FC<SearchResultsProps> = ({
     }
   };
 
-  const handleTogglePhone = (candidateEmail: string) => {
-    const newShowPhone = new Set(showPhoneNumbers);
-    if (newShowPhone.has(candidateEmail)) {
-      newShowPhone.delete(candidateEmail);
-    } else {
-      newShowPhone.add(candidateEmail);
-    }
-    setShowPhoneNumbers(newShowPhone);
+  const togglePhoneNumbers = (candidateEmail: string) => {
+    setShowPhoneNumbers(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(candidateEmail)) {
+        newSet.delete(candidateEmail);
+      } else {
+        newSet.add(candidateEmail);
+      }
+      return newSet;
+    });
   };
 
-  const toggleBehavioralSection = (candidateKey: string) => {
-    const newExpanded = new Set(expandedBehavioralSections);
-    if (newExpanded.has(candidateKey)) {
-      newExpanded.delete(candidateKey);
-    } else {
-      newExpanded.add(candidateKey);
-    }
-    setExpandedBehavioralSections(newExpanded);
+  const toggleBehavioralSection = (candidateEmail: string) => {
+    setExpandedBehavioralSections(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(candidateEmail)) {
+        newSet.delete(candidateEmail);
+      } else {
+        newSet.add(candidateEmail);
+      }
+      return newSet;
+    });
   };
+
+  const toggleDebugSection = (candidateEmail: string) => {
+    setExpandedDebugSections(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(candidateEmail)) {
+        newSet.delete(candidateEmail);
+      } else {
+        newSet.add(candidateEmail);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleEvidenceSection = (candidateEmail: string) => {
+    setExpandedEvidenceSections(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(candidateEmail)) {
+        // If closing evidence section, also close debug section
+        newSet.delete(candidateEmail);
+        setExpandedDebugSections(debugPrev => {
+          const newDebugSet = new Set(debugPrev);
+          newDebugSet.delete(candidateEmail);
+          return newDebugSet;
+        });
+      } else {
+        // If opening evidence section, also open debug section
+        newSet.add(candidateEmail);
+        setExpandedDebugSections(debugPrev => {
+          const newDebugSet = new Set(debugPrev);
+          newDebugSet.add(candidateEmail);
+          return newDebugSet;
+        });
+      }
+      return newSet;
+    });
+  };
+
+  const formatPhoneNumber = (phone: string) => {
+    // Remove all non-digit characters
+    const cleaned = phone.replace(/\D/g, '');
+    
+    // Format based on length
+    if (cleaned.length === 10) {
+      return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+    } else if (cleaned.length === 11 && cleaned.startsWith('1')) {
+      return `+1 (${cleaned.slice(1, 4)}) ${cleaned.slice(4, 7)}-${cleaned.slice(7)}`;
+    }
+    
+    return phone; // Return original if can't format
+  };
+
+
+
+  const sanitizeHtml = (html: string): string => {
+    return DOMPurify.sanitize(html, {
+      ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'br', 'p'],
+      ALLOWED_ATTR: ['href', 'target']
+    });
+  };
+
+  // Get the first candidate for referral section
+  const firstCandidate = searchResults?.candidates?.[0];
 
   // Get candidates from API results or use empty array
   const candidates: Candidate[] = searchResults?.candidates || [];
-
-  // Get initials from candidate name
-  const getInitials = (name: string): string => {
-    if (!name) return '?';
-    const parts = name.trim().split(/\s+/);
-    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
-    return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
-  };
-
-  // Default photo for candidates without profile photos
-  const getProfilePhoto = (candidate: Candidate): string => {
-    if (candidate.profile_photo_url && isValidUrl(candidate.profile_photo_url)) {
-      // Additional validation for image URLs
-      const url = new URL(candidate.profile_photo_url);
-      const allowedDomains = ['images.pexels.com', 'media.licdn.com', 'avatars.githubusercontent.com'];
-      if (allowedDomains.some(domain => url.hostname.includes(domain))) {
-        return candidate.profile_photo_url;
-      }
-    }
-    // Use a default photo from Pexels based on candidate name hash
-    const photoIds = [774909, 2379004, 1239291, 1681010, 1043471, 1181686];
-    const hash = (candidate.name || '').split('').reduce((a, b) => a + b.charCodeAt(0), 0);
-    const photoId = photoIds[hash % photoIds.length];
-    return `https://images.pexels.com/photos/${photoId}/pexels-photo-${photoId}.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop`;
-  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
@@ -262,6 +563,20 @@ const SearchResults: React.FC<SearchResultsProps> = ({
               </p>
             </div>
           ) : (
+            // Debug: Log the raw candidate data to see what we're working with
+            (() => {
+              console.log('🔍 Raw candidates data:', candidates);
+              candidates.forEach((candidate, index) => {
+                console.log(`📋 Candidate ${index + 1} (${candidate.name}):`, {
+                  profile_photo_url: candidate.profile_photo_url,
+                  linkedin_url: candidate.linkedin_url,
+                  linkedin_profile: candidate.linkedin_profile,
+                  has_linkedin_profile: !!candidate.linkedin_profile,
+                  linkedin_profile_keys: candidate.linkedin_profile ? Object.keys(candidate.linkedin_profile) : []
+                });
+              });
+              return null;
+            })(),
             candidates.map((candidate, index) => (
               <div key={candidate.email || candidate.name} className="backdrop-blur-sm border rounded-xl overflow-hidden" style={{ backgroundColor: '#1a2332', borderColor: '#fb4b76' }}>
                 {/* Clickable Card Header */}
@@ -270,30 +585,12 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                   className="flex items-center justify-between p-4 sm:p-5 cursor-pointer hover:bg-white/5 transition-all duration-200"
                 >
                   <div className="flex items-center space-x-3 sm:space-x-4 flex-1">
-                    {/* Photo with fallback to initials */}
-                    <div className="relative w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
-                      <img
-                        src={getProfilePhoto(candidate)}
-                        alt={candidate.name}
-                        className="w-full h-full rounded-full object-cover border-2 border-white/20"
-                        onError={(e) => {
-                          // Hide the image on error
-                          (e.target as HTMLImageElement).style.display = 'none';
-                          // Show the initials div
-                          const parent = (e.target as HTMLImageElement).parentElement;
-                          if (parent) {
-                            const initialsDiv = parent.querySelector('.initials-fallback');
-                            if (initialsDiv) initialsDiv.classList.remove('hidden');
-                          }
-                        }}
-                      />
-                      <div
-                        className="initials-fallback hidden absolute inset-0 w-full h-full rounded-full flex items-center justify-center text-white font-semibold text-lg border-2 border-white/20"
-                        style={{ backgroundColor: '#fb4b76' }}
-                      >
-                        {getInitials(candidate.name)}
-                      </div>
-                    </div>
+                    {/* Enhanced Avatar Component */}
+                    <AvatarComponent 
+                      candidate={candidate}
+                      size="md"
+                      className="flex-shrink-0"
+                    />
 
                     {/* Info */}
                     <div className="flex-1">
@@ -315,11 +612,13 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                         {candidate.accuracy}%
                       </span>
                     </div>
+                    
+
                   </div>
 
                   {/* Expand Indicator */}
                   <div className="ml-4 text-white/50">
-                    {expandedCards.has(candidate.email) ? (
+                    {expandedCards.has(candidate.email || candidate.name) ? (
                       <ChevronUp size={16} />
                     ) : (
                       <ChevronDown size={16} />
@@ -373,21 +672,21 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                       {/* Contact Icons - Left */}
                       <div className="flex items-center space-x-3 mb-4">
                         <button
-                          onClick={() => candidate.linkedin_url && openSafeLink(candidate.linkedin_url)}
+                          onClick={() => candidate.linkedin_url && openUrlSafely(candidate.linkedin_url)}
                           disabled={!candidate.linkedin_url}
                           className="flex items-center justify-center w-10 h-10 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full transition-all duration-200 group disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <Linkedin size={16} className="text-white/70 group-hover:text-white" />
                         </button>
                         <button
-                          onClick={() => candidate.email && openSafeLink(`mailto:${candidate.email}`)}
+                          onClick={() => candidate.email && openUrlSafely(`mailto:${candidate.email}`)}
                           disabled={!candidate.email}
                           className="flex items-center justify-center w-10 h-10 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full transition-all duration-200 group disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <Mail size={16} className="text-white/70 group-hover:text-white" />
                         </button>
                         <button
-                          onClick={() => handleTogglePhone(candidate.email || candidate.name)}
+                          onClick={() => togglePhoneNumbers(candidate.email || candidate.name)}
                           className="flex items-center justify-center w-10 h-10 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full transition-all duration-200 group"
                         >
                           <Phone size={16} className="text-white/70 group-hover:text-white" />
@@ -401,7 +700,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                                 Direct:
                               </span>
                               <span className="text-white text-sm font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                                +1 (555) 123-4567
+                                {candidate.phone ? formatPhoneNumber(candidate.phone) : 'Not available'}
                               </span>
                             </div>
                             <div className="bg-white/5 border border-white/10 rounded-lg px-4 py-2 flex justify-between items-center">
@@ -409,7 +708,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                                 Mobile:
                               </span>
                               <span className="text-white text-sm font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                                +1 (555) 987-6543
+                                {candidate.mobile ? formatPhoneNumber(candidate.mobile) : 'Not available'}
                               </span>
                             </div>
                           </div>
@@ -431,6 +730,134 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                             </li>
                           ))}
                         </ul>
+                      </div>
+
+                      {/* Combined Validation & Evidence Section */}
+                      <div className="mb-6">
+                        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 pt-6">
+                          <div className="flex items-center space-x-2 mb-3">
+                            <Brain size={14} className="text-yellow-400" />
+                            <h5 className="text-yellow-400 font-medium text-xs" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                              MODEL VALIDATION & EVIDENCE
+                            </h5>
+                            <span className="bg-yellow-500/20 text-yellow-400 text-[10px] px-2 py-1 rounded-full border border-yellow-500/30">
+                              DEV
+                            </span>
+                            <button
+                              onClick={() => toggleEvidenceSection(candidate.email || candidate.name)}
+                              className="ml-auto text-yellow-400/60 hover:text-yellow-400 transition-colors p-1 rounded hover:bg-yellow-500/20"
+                              title="Toggle evidence section"
+                            >
+                              {expandedEvidenceSections.has(candidate.email || candidate.name) ? (
+                                <ChevronUp size={12} />
+                              ) : (
+                                <ChevronDown size={12} />
+                              )}
+                            </button>
+                          </div>
+                          
+                          {/* Evidence Section Content - Collapsible */}
+                          {expandedEvidenceSections.has(candidate.email || candidate.name) && (
+                            <>
+                              <p className="text-yellow-400/80 text-xs mb-3" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                                Reference URLs for AI response validation and supporting evidence
+                              </p>
+                              
+                              {/* Debug Info - Collapsible */}
+                              {expandedDebugSections.has(candidate.email || candidate.name) && (
+                                <div className="bg-white/5 border border-yellow-500/20 rounded px-3 py-2 mb-3">
+                                  <div className="space-y-1 text-xs">
+                                    <div className="flex justify-between items-center">
+                                      <span className="text-yellow-400/60 font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                                        Evidence URLs:
+                                      </span>
+                                      <span className="text-yellow-400/60" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                                        {candidate.evidence_urls?.length || 0}
+                                      </span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                      <span className="text-yellow-400/60 font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                                        Evidence Summary:
+                                      </span>
+                                      <span className="text-yellow-400/60" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                                        {candidate.evidence_summary ? 'Available' : 'Loading...'}
+                                      </span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                      <span className="text-yellow-400/60 font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                                        Confidence:
+                                      </span>
+                                      <span className="text-yellow-400/60" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                                        {candidate.evidence_confidence ? `${Math.round(candidate.evidence_confidence * 100)}%` : 'Processing...'}
+                                      </span>
+                                    </div>
+
+                                    <div className="text-yellow-400/40 text-center pt-1 border-t border-yellow-500/20" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                                      Validation URLs from evidence_urls array
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                              
+
+                              
+                          {/* URL Display Fields with Open Buttons */}
+                          <div className="space-y-3">
+                            {/* Column Headers */}
+                            <div className="flex items-center space-x-2 mb-2">
+                              <div className="flex-1 text-yellow-400/60 text-xs font-medium px-3" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                                URL
+                              </div>
+                              <div className="flex items-center space-x-3 text-xs">
+                                <div className="text-center w-16">
+                                  <span className="text-yellow-400/60 font-medium" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                                    Relevance
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            {/* Validation URLs - Show evidence URLs from backend */}
+                            {candidate.evidence_urls && candidate.evidence_urls.length > 0 && (
+                              <>
+                                {candidate.evidence_urls.map((evidence, index) => (
+                                  <div key={`validation-${index}`} className="flex items-center space-x-2">
+                                    <button
+                                      onClick={() => window.open(evidence.url, '_blank', 'noopener,noreferrer')}
+                                      className="flex-1 bg-white/5 border border-yellow-500/30 rounded px-3 py-2 text-xs text-yellow-400 truncate hover:bg-white/10 hover:border-yellow-500/40 transition-all duration-200 text-left"
+                                      style={{ fontFamily: 'Poppins, sans-serif' }}
+                                    >
+                                      {evidence.url}
+                                    </button>
+                                    <div className="flex items-center space-x-3 text-xs">
+                                      <div className="text-center w-16">
+                                        <span className="text-yellow-400/60 px-2 py-1 rounded border border-yellow-500/30 bg-yellow-500/10">
+                                          {Math.round(evidence.relevance_score * 100)}%
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </>
+                            )}
+                            
+                            {/* Loading State for Validation URLs */}
+                            {(!candidate.evidence_urls || candidate.evidence_urls.length === 0) && (
+                              <div className="text-center py-4">
+                                <div className="flex items-center justify-center space-x-2 mb-2">
+                                  <Loader2 size={16} className="text-yellow-400 animate-spin" />
+                                  <span className="text-yellow-400/60 text-xs" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                                    LOADING VALIDATION URLS...
+                                  </span>
+                                </div>
+                                <p className="text-yellow-400/30 text-xs" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                                  AI model is processing and validating candidate data
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                            </>
+                          )}
+                        </div>
                       </div>
 
                       {/* Candidate Behavioral Data */}
@@ -561,7 +988,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                       )}
 
                       {/* Feedback Buttons */}
-                      <div className="flex items-center justify-end space-x-4">
+                      <div className="flex items-center justify-end space-x-4 mb-4">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -587,6 +1014,8 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                           </span>
                         </button>
                       </div>
+
+
                     </div>
                   </div>
                 )}

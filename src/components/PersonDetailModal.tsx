@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Target, Mail, Linkedin, Phone, Eye, EyeOff, ChevronDown, ChevronUp, ChevronRight, Brain, TrendingUp, TrendingDown, Shield, Heart } from 'lucide-react';
+import SimpleAvatarComponent from './SimpleAvatarComponent';
 
 interface TrackedPerson {
   id: string;
@@ -69,29 +70,11 @@ const PersonDetailModal: React.FC<PersonDetailModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/10">
           <div className="flex items-center space-x-4">
-            <div className="relative w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0">
-              <img
-                src={person.profilePhoto}
-                alt={person.name}
-                className="w-full h-full rounded-full object-cover border-2 border-white/20"
-                onError={(e) => {
-                  // Hide the image on error
-                  (e.target as HTMLImageElement).style.display = 'none';
-                  // Show the initials div
-                  const parent = (e.target as HTMLImageElement).parentElement;
-                  if (parent) {
-                    const initialsDiv = parent.querySelector('.initials-fallback');
-                    if (initialsDiv) initialsDiv.classList.remove('hidden');
-                  }
-                }}
-              />
-              <div 
-                className="initials-fallback hidden absolute inset-0 w-full h-full rounded-full flex items-center justify-center text-white font-semibold text-lg border-2 border-white/20"
-                style={{ backgroundColor: '#fb4b76' }}
-              >
-                {getInitials(person.name)}
-              </div>
-            </div>
+            <SimpleAvatarComponent 
+              person={person}
+              size="lg"
+              className="flex-shrink-0"
+            />
             <div>
               <h2 className="text-white text-lg sm:text-xl font-semibold mb-1" style={{ fontFamily: 'Montserrat, sans-serif' }}>
                 {person.name}

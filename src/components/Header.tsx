@@ -105,14 +105,10 @@ const Header: React.FC<HeaderProps> = ({ onToggleHistory, showHistoryButton = fa
             )}
           </div>
         ) : (
-          <button 
-            onClick={onLoginClick}
-            className="flex items-center space-x-1 sm:space-x-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-2 py-1 sm:px-3 sm:py-1.5 text-white hover:bg-white/20 transition-all duration-200"
-          >
-            <User size={14} className="sm:w-4 sm:h-4" />
-            <span className="text-xs font-medium hidden sm:inline">Login</span>
-            <span className="text-xs font-medium sm:hidden">Log</span>
-          </button>
+          <div className="flex items-center space-x-2 bg-green-500/20 backdrop-blur-sm border border-green-400/30 rounded-full px-3 py-1.5">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span className="text-xs font-medium text-red-400">Dev Mode</span>
+          </div>
         )}
       </div>
     </header>

@@ -7,6 +7,10 @@ export interface SearchRequest {
   max_candidates?: number;
   include_linkedin?: boolean;
   include_posts?: boolean;
+  // Evidence integration parameters
+  include_evidence?: boolean;
+  evidence_diversity_threshold?: number;
+  evidence_confidence_threshold?: number;
 }
 
 export interface Candidate {
@@ -19,12 +23,32 @@ export interface Candidate {
   linkedin_url?: string;
   profile_photo_url?: string;
   location?: string;
+  phone?: string;
+  mobile?: string;
   linkedin_profile?: {
     summary?: string;
     experience?: any[];
     education?: any[];
+    profile_picture?: string;
   };
   behavioral_data?: BehavioralData;
+  validation_urls?: string[];
+  
+  // NEW EVIDENCE FIELDS
+  evidence_urls?: EvidenceUrl[];
+  evidence_summary?: string;
+  evidence_confidence?: number;
+  evidence_processing_time?: number;
+}
+
+export interface EvidenceUrl {
+  url: string;
+  title: string;
+  description: string;
+  evidence_type: string;
+  relevance_score: number;
+  confidence_level: 'high' | 'medium' | 'low';
+  supporting_explanation: string;
 }
 
 export interface BehavioralData {
@@ -95,7 +119,11 @@ export const useKnowledgeGPT = (): UseKnowledgeGPT => {
           prompt,
           max_candidates: maxCandidates,
           include_linkedin: true,
-          include_posts: false
+          include_posts: false,
+          // Evidence integration - enable by default
+          include_evidence: true,
+          evidence_diversity_threshold: 0.7, // Ensure diverse evidence sources
+          evidence_confidence_threshold: 0.6  // Minimum confidence for evidence
         })
       });
       
@@ -105,7 +133,7 @@ export const useKnowledgeGPT = (): UseKnowledgeGPT => {
         console.error('API Error Response Text:', responseText);
         
         // Try to parse as JSON
-        let errorData = {};
+        let errorData: any = {};
         try {
           errorData = JSON.parse(responseText);
         } catch (parseError) {
@@ -144,7 +172,7 @@ export const useKnowledgeGPT = (): UseKnowledgeGPT => {
         console.error('API Error Response Text:', responseText);
         
         // Try to parse as JSON
-        let errorData = {};
+        let errorData: any = {};
         try {
           errorData = JSON.parse(responseText);
         } catch (parseError) {
@@ -163,6 +191,50 @@ export const useKnowledgeGPT = (): UseKnowledgeGPT => {
       }
       
       const data = await response.json();
+      
+      // Debug logging for evidence data
+      console.log('🔍 API Response Data:', {
+        request_id: data.request_id,
+        status: data.status,
+        candidates_count: data.candidates?.length || 0,
+        has_candidates: !!data.candidates
+      });
+      
+      if (data.candidates && data.candidates.length > 0) {
+        data.candidates.forEach((candidate: any, index: number) => {
+          console.log(`🔍 Candidate ${index + 1} evidence data:`, {
+            name: candidate.name,
+            evidence_urls: candidate.evidence_urls,
+            evidence_urls_count: candidate.evidence_urls?.length || 0,
+            evidence_summary: candidate.evidence_summary,
+            evidence_confidence: candidate.evidence_confidence,
+            evidence_processing_time: candidate.evidence_processing_time
+          });
+        });
+      }
+      
+      // Log the complete API response structure
+      console.log('🔍 Complete API Response Structure:', {
+        top_level_keys: Object.keys(data),
+        has_evidence_field: 'evidence' in data,
+        has_evidence_data: 'evidence_data' in data,
+        has_evidence_urls: 'evidence_urls' in data,
+        full_response: data
+      });
+      
+      // Check if evidence data is stored separately and needs to be merged
+      if (data.evidence && data.candidates) {
+        console.log('🔍 Found separate evidence data, attempting to merge...');
+        data.candidates.forEach((candidate: any, index: number) => {
+          if (data.evidence[candidate.name] || data.evidence[candidate.email]) {
+            const evidenceKey = data.evidence[candidate.name] || data.evidence[candidate.email];
+            console.log(`🔍 Merging evidence for candidate ${index + 1}:`, evidenceKey);
+            candidate.evidence_urls = evidenceKey.urls || evidenceKey.evidence_urls || [];
+            candidate.evidence_summary = evidenceKey.summary || evidenceKey.evidence_summary;
+            candidate.evidence_confidence = evidenceKey.confidence || evidenceKey.evidence_confidence;
+          }
+        });
+      }
 
       return data;
     } catch (err) {

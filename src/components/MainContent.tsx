@@ -66,7 +66,7 @@ const MainContent: React.FC<MainContentProps> = ({ onSearch, pendingSearch = '' 
                   </div>
                 ) : currentSearch ? (
                   <div className="relative w-full h-10 overflow-hidden">
-                    <style jsx>{`
+                    <style jsx="true">{`
                       @keyframes rollInPauseOut {
                         0% { 
                           transform: translateY(100%);
